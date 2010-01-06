@@ -1,0 +1,11 @@
+The PACHA project aims at providing a child-useable interface for basic
+emergency admin actions. It has to be "useable by whoever has to, including
+cooks" by design. The name stands for "Python Admintool for Cooks as Half
+Admins" by the way.
+
+It is designed to be easily extensible, and logs actions on the server. No
+unwanted connection is assumed possible hence a very basic rights management
+(ie "yes you can").
+
+First steps : client, ssh and SNMP connexions.
+
