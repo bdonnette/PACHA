@@ -9,3 +9,4 @@ unwanted connection is assumed possible hence a very basic rights management
 
 First steps : client, ssh and SNMP connexions.
 
+Initial conception tried pyssh, but it seems that pexpect is much better at doing the job.
