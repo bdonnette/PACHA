@@ -13,7 +13,26 @@
 
 from NetArthur import *
 
-class Client(SocketProcess):
+class Client(object):
+    def __init__(self,
+                 host_name = "127.0.0.1", s_type = "TCP",
+                 port = "", debug = 0):
+        """            
+        @param host_name: Host name or IP address
+        """
+        self.host_name = host_name
+        self.level = debug
+        self.__log__ (self.level,
+                      "init raw Client host = %s" % 
+                      self.host_name)
+
+    def __log__(self, level, message):
+        if (self.level < level):
+            return
+        print "CL : %s" % message
+
+
+class NetClient(SocketProcess, Client):
     def __init__(self,
                  host_name = "127.0.0.1", s_type = "TCP",
                  port = "", debug = 0):
@@ -21,9 +40,9 @@ class Client(SocketProcess):
         @param host_name: Host name or IP address
         """
         SocketProcess.__init__(self, s_type, debug, port)
-        self.host_name = host_name
+        Client.__init__(self, host_name, s_type, port, debug)
+
         self.__log__ (self.level,
                       "init Client host = %s, son of SocketProcess" % 
                       self.host_name)
-
 

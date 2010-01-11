@@ -13,7 +13,7 @@
 from NetClient import *
 import pyssh as ssh
 
-class NetSSH(NetClient):
+class NetSSH(Client):
     def __init__(self, host_name, user_name, password, prompt):
         """            
         @param host_name: Host name or IP address
@@ -34,9 +34,16 @@ class NetSSH(NetClient):
         """
         Connect to the remote host and login.    
         """
+        print "Login..."
         self.session_ssh = ssh.Ssh(self.user_name, self.host_name, self.port)
+        print "Coucou"
         self.session_ssh.login(self.password)
 
+        print ("ssh login result :" % self.session_ssh)
+        if (self.session_ssh):
+            print ("--> Login OK")
+        else:
+            print ("!! NOK")
         
     def run_command(self, command):
         """Run a command on the remote host.
@@ -45,7 +52,7 @@ class NetSSH(NetClient):
         @return: Command output
         @rtype: String
         """ 
-        response = self.ssh.sendcmd(command)
+        response = self.session_ssh.sendcmd(command)
         return self.__strip_output(command, response)
         
     
@@ -53,7 +60,7 @@ class NetSSH(NetClient):
         """Close the connection to the remote host.
             
         """
-        self.ssh.logout()
+        self.session_ssh.logout()
         
         
     def run_atomic_command(self, command):
@@ -96,4 +103,12 @@ class NetSSH(NetClient):
         my_ssh.logout
     
 if (__name__ == "__main__"):
-    test
+#    test()
+    my_ssh = NetSSH("192.168.122.14", "root", "toto", "#")
+    print "__init__ OK"
+    print my_ssh.login
+    my_ssh.login
+    print "Login passed"
+    my_ssh.run_command("ls -ltr")
+    print "Fin commande"
+    my_ssh.logout
