@@ -14,62 +14,55 @@
 
 import sys
 from PyQt4 import QtCore, QtGui
+import HMI_Machine as HM
 
 class HMIapp(object):
-    def __init__(self):
+    def __init__(self, n_machines = 2):
+        # Global app init
         self.app = QtGui.QApplication(sys.argv)
 
         self.grid = QtGui.QGridLayout()
-        self.grid2 = QtGui.QGridLayout()
-        for ligne in range(1,2):
-            for colonne in range(1,3):
-                self.grid.addWidget(QtGui.QPushButton(
-                               "%d,%d"%(ligne,colonne)),
-                               ligne, colonne)
-        self.title = QtGui.QPushButton("Titre")
+        self.gridlist = []
 
-        QtCore.QObject.connect(
-                               self.title, QtCore.SIGNAL('clicked()'),
-                               self.extend)
-        self.grid.addWidget(self.title, 0, 1, 1, 2)
+        # Machines HMI elements
+        self.Machines = []
+        self.machine_viewed = 0
 
-        for ligne in range(1,4):
-            for colonne in range(1,4):
-                self.grid2.addWidget(QtGui.QPushButton(
-                               "%d,%d"%(ligne,colonne)),
-                               ligne, colonne)
+        for i in range(0, n_machines):
+            # read config of machine...
+            
+            self.Machines.append(HM.HMI_Machine(i+1))
+            self.Machines[i].config()
+            # Remainder : colored widget to be changed upon signal/slot
+            self.grid.addWidget(self.Machines[i].synthex.button,
+                                0, i, 1, 1)
+            QtCore.QObject.connect(self.Machines[i].synthex.button,
+                                   QtCore.SIGNAL("ToggleMachineView(int)"),
+                                   self.toggle)
+
 
         self.wr = QtGui.QWidget()
-        self.wf = QtGui.QWidget()
         self.wr.setLayout(self.grid)
-        self.wf.setLayout(self.grid2)
 
     def show(self):
         self.wr.show()
 
-    def extend(self):
-        self.wf.show()
+    def toggle(self, numitem):
+        ''' Intelligent display of 1 machine at a time
+        '''
+        if (self.machine_viewed) :
+            self.Machines[self.machine_viewed - 1].hide()
+            if (numitem == self.machine_viewed) :
+                machine_viewed = 0
+            else :
+                machine_viewed = numitem
+                self.Machines[machine_viewed - 1].show()
 
-	QtCore.QObject.disconnect(
-                                  self.title, QtCore.SIGNAL('clicked()'),
-                                  self.extend)
+        else:
+            machine_viewed = numitem
+            self.Machines[machine_viewed - 1].show()
 
-        QtCore.QObject.connect(
-                               self.title, QtCore.SIGNAL('clicked()'),
-                               self.reduce)
-
-
-    def reduce(self):
-        self.wf.hide()
-
-	QtCore.QObject.disconnect(
-                                  self.title, QtCore.SIGNAL('clicked()'),
-                                  self.reduce)
-
-        QtCore.QObject.connect(
-                               self.title, QtCore.SIGNAL('clicked()'),
-                               self.extend)
-
+        self.machine_viewed = machine_viewed
 
 hmi = HMIapp()
 hmi.show()
