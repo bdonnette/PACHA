@@ -24,28 +24,45 @@ class HMIapp(object):
         self.grid = QtGui.QGridLayout()
         self.gridlist = []
 
+        self.wr = QtGui.QWidget()
+
         # Machines HMI elements
         self.Machines = []
         self.machine_viewed = 0
-
+        self.n_machines = n_machines
         for i in range(0, n_machines):
             # read config of machine...
             
             self.Machines.append(HM.HMI_Machine(i+1))
             self.Machines[i].config()
             # Remainder : colored widget to be changed upon signal/slot
-            self.grid.addWidget(self.Machines[i].synthex.button,
+            self.grid.addWidget(self.Machines[i].synthex.Form,
                                 0, i, 1, 1)
             QtCore.QObject.connect(self.Machines[i].synthex.button,
                                    QtCore.SIGNAL("ToggleMachineView(int)"),
                                    self.toggle)
 
-
-        self.wr = QtGui.QWidget()
         self.wr.setLayout(self.grid)
+        self.wr.setGeometry(0, 12, 720, 44)
+        self.has_shown = False
+        
 
     def show(self):
         self.wr.show()
+        if (not self.has_shown):
+            self.has_shown = True
+            self.pos = self.wr.pos()
+            self.hgt = self.wr.height()
+            self.height = self.wr.frameGeometry().height()
+            print "Y = %d h = %d fG.height %d" % (
+                self.pos.y(), 
+                self.hgt, 
+                self.height)
+            for i in range(0, self.n_machines):
+                self.Machines[i].move(
+                    self.pos.x(), 
+                    self.pos.y() + self.height + 24)
+
 
     def toggle(self, numitem):
         ''' Intelligent display of 1 machine at a time
@@ -64,7 +81,7 @@ class HMIapp(object):
 
         self.machine_viewed = machine_viewed
 
-hmi = HMIapp()
+hmi = HMIapp(3)
 hmi.show()
 sys.exit(hmi.app.exec_())
 
