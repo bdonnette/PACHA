@@ -15,7 +15,7 @@ import sys
 from PyQt4 import QtCore, QtGui
 from HMI_object import *
 
-class HMI_action(HMI_object):
+class HMI_dictate(HMI_object):
     ''' This class defines an HMI element to host command line typing
     and feedback, for ssh commands issued upon sysadmins call '''
     def __init__(self, do_label = "do", command = "echo toto"):
