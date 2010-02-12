@@ -66,11 +66,11 @@ class MyButton(object):
         self.label.setPixmap(self.pixmaps[num])
 
 class HMI_Machine(object):
-    ''' Class to embark Widgets related to a single machine, making the final
-        outlook and code easy.
-        The HMI element shows machine # number, has a grid widget,
-        and a synthex, to be displayed on the general widget
-        '''
+    ''' Class to embark Widgets related to a single machine, making the
+    final outlook and code easy.
+    The HMI element shows machine # number, has a grid widget,
+    and a synthex, to be displayed on the general widget
+    '''
     def __init__(self, number = 1):
         self.number  = number
         self.grid    = QtGui.QGridLayout()
