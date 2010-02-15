@@ -59,6 +59,6 @@ class HMI_object(object):
         self.grid = QtGui.QGridLayout()
         self.label = QtGui.QLabel(label)
         self.icon = HMI_icon(self.grid)
-        # Placement par défaut
+        # default placing
         self.grid.addWidget(self.icon.label, 1, 1)
         self.grid.addWidget(self.lable, 2, 1)
