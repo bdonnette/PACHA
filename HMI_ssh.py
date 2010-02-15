@@ -53,5 +53,5 @@ class ssh_agent (object):
         child.expect(pexpect.EOF)
         
         self.stdout = child.before
-        return child
+        return self.stdout
 

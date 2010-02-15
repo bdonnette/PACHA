@@ -14,7 +14,7 @@
 import os
 import sys
 from PyQt4 import QtCore, QtGui
-
+import HMI_dictate as hd
 # Signal relay + widget
 
 
@@ -82,15 +82,23 @@ class HMI_Machine(object):
 
         # Fake config
         for i in range(1,4):
-            for j in range (1,3):
+            for j in range (1,5):
                 akey = self.dkey % (i,j)
                 self.widgets[akey] = QtGui.QPushButton(
                                        "M %d Param %d, %d" % 
                                        (self.number, i, j))
                 self.grid.addWidget(self.widgets[akey], i, j, 1, 1)
 
+        host = "192.168.122.14"
+        user = "root"
+        password = "toto"
+        self.dictate = hd.HMI_dictate(host, user, password)
+        self.grid.addWidget(self.dictate.Form, 4, 1, 20, 4)
+        self.RefreshWidget = QtGui.QPushButton("Refresh")
+        self.grid.addWidget(self.RefreshWidget, 25, 1, 1, 4)
         # True config to be made of HMI_line's
         self.widget = QtGui.QWidget()
+        self.widget.setGeometry(0, 28, 490, 420)
         self.widget.setLayout(self.grid)
 
     def move(self, x, y):
