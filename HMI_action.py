@@ -13,30 +13,32 @@
 
 import sys
 from PyQt4 import QtCore, QtGui
-from HMI_object import *
+from HMI_line import *
 from HMI_ssh import *
 
-class HMI_action(HMI_object):
+class HMI_action(HMI_line):
     ''' This class defines an HMI element (on which a line is to be based)
     so as to define a generic active HMI element object
     to be derived into whatever element will have to be'''
-    def __init__(self, 
+    def __init__(self,
                  remote_machine = "localhost",
                  user = "root", password = "",
                  do_label = "do", command = "echo toto",
                  feedback_command = "ping %s"):
-        ''' Additions from HMI_object :
+        ''' Additions from HMI_line :
         - "Do it" button
         - Corresponding action as a shell command
         '''
+        HMI_line.__init__(self, remote_machine, 0)
         self.remote_machine = remote_machine
         self.user = user
         self.password = password
         self.command = command
         self.do_button = QtGui.QPushButton(do_label)
+        self.layout.addWidget(self.do_button, 2, 1, 1, 3)
         self.feedback_command = feedback_command % remote_machine
-        # next : bind action and button
 
+        # next : bind action and button
         QtCore.QObject.connect(
             self.do_button,
             QtCore.SIGNAL('clicked()'),
@@ -51,3 +53,12 @@ class HMI_action(HMI_object):
     # Feedback : TBD (ssh / local ?)
     def feedback(self):
         pass
+
+
+if (__name__ == "__main__"):
+    # unit test
+    app = QtGui.QApplication(sys.argv)
+    action = HMI_action("localhost",
+                        "test", "",
+                        "echo toto", "echo",
+                        "ping %s")

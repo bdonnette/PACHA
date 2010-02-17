@@ -13,19 +13,22 @@
 
 import sys
 from PyQt4 import QtCore, QtGui
-from HMI_object import *
+from HMI_line import *
 
-class HMI_supervision(HMI_object):
+class HMI_supervision(HMI_line):
     ''' This class defines an HMI element (on which a line is to be based)
     so as to define a generic supervision HMI element object
     to be derived into whatever element will have to be'''
-    def __init__(self, supervised_item):
+    def __init__(self, supervised_item = {}):
         ''' Adds the following to HMI_object class :
         - "Update" button
         '''
+        HMI_line.__init__(self, supervised_item["remote_machine"], 0)
+        
         self.update_bt = QtGui.QPushButton("Actualiser")
         self.grid.addWidget(self.update_bt, 1, 3)
         self.item = supervised_item
+        self.supervision = supervisor(self.item)
         QtCore.QObject.connect(self.update_bt,
                                QtCore.SIGNAL('clicked()'),
                                self.update)

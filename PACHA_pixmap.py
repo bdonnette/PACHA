@@ -11,7 +11,7 @@
 #
 #
 
-import os
+import os, sys
 from PyQt4 import QtCore, QtGui
 
 class p_pixmap(object):
@@ -46,3 +46,20 @@ class p_pixmap(object):
 
         self.num = num
         self.label.setPixmap(self.pixmaps[num])
+
+if (__name__ == "__main__"):
+    # unit test
+    app = QtGui.QApplication(sys.argv)
+    wid = QtGui.QWidget()
+    line = QtGui.QGridLayout(wid)
+    w1 = QtGui.QWidget(wid)
+    w2 = QtGui.QWidget(wid)
+    pix = p_pixmap(w1)
+    pix.changeColor(2)
+    button = QtGui.QPushButton("bouton", w2)
+
+    line.addWidget(w1, 1, 1)
+    line.addWidget(w2, 1, 2, 1, 3)
+
+    wid.show()
+    sys.exit(app.exec_())

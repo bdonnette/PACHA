@@ -25,8 +25,27 @@ class HMI_line(object):
     def __init__(self, text = "line", value = 0):
         self.value = value
         self.Form = QtGui.QWidget()
-        self.Form.setObjectName(text)
-        self.label = QtGui.QLabel(self.Form)
-        self.label.setGeometry(QtCore.QRect(0, 0, 27, 27))
+        #self.Form.setObjectName(text)
+        self.layout = QtGui.QGridLayout(self.Form)
+        #self.line.setObjectName(text)
+        self.widget1 = QtGui.QWidget(self.Form)
+        self.pix = pp.p_pixmap(self.widget1)
+        self.layout.addWidget(self.widget1, 1, 1, 1, 4)
+        self.pix.changeColor(value)
 
         
+if (__name__ == "__main__"):
+    # unit test
+    app = QtGui.QApplication(sys.argv)
+    line = HMI_line("Ligne", 0)
+    w2 = QtGui.QWidget(line.Form)
+    button = QtGui.QPushButton("HMI_Line test", w2)
+    line.layout.addWidget(w2, 1, 2, 1, 3)
+    line.Form.adjustSize()
+    geo = line.Form.geometry()
+    geo.setWidth(220)
+    geo.setHeight(50)
+    line.Form.setGeometry(geo)
+
+    line.Form.show()
+    sys.exit(app.exec_())

@@ -43,7 +43,7 @@ class HMIapp(object):
                                    self.toggle)
 
         self.wr.setLayout(self.grid)
-        self.wr.setGeometry(0, 12, 720, 44)
+        self.wr.setGeometry(0, 12, 720, 50)
         self.has_shown = False
         
 
@@ -54,10 +54,6 @@ class HMIapp(object):
             self.pos = self.wr.pos()
             self.hgt = self.wr.height()
             self.height = self.wr.frameGeometry().height()
-            print "Y = %d h = %d fG.height %d" % (
-                self.pos.y(), 
-                self.hgt, 
-                self.height)
             for i in range(0, self.n_machines):
                 self.Machines[i].move(
                     self.pos.x(), 
