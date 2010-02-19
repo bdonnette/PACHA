@@ -15,6 +15,19 @@ import sys
 from PyQt4 import QtCore, QtGui
 from HMI_line import *
 
+class Supervisor(object):
+    ''' Global supervisor, to encompass df-like commands and true
+    SNMP requests (the latter dependent on the SNMP object) '''
+    def __init__(self, supervised_item = {}):
+        ''' Input : dictionnary declaring :
+        - Method (ssh / SNMP)
+        - True accessor (command / OID)
+        - Remote
+        - Config elements such as normal, warning, alert
+        and error levels '''
+        method = supervised_item["method"]
+        accessor = supervised_item["accessor"]
+
 class HMI_supervision(HMI_line):
     ''' This class defines an HMI element (on which a line is to be based)
     so as to define a generic supervision HMI element object
@@ -28,10 +41,11 @@ class HMI_supervision(HMI_line):
         self.update_bt = QtGui.QPushButton("Actualiser")
         self.grid.addWidget(self.update_bt, 1, 3)
         self.item = supervised_item
-        self.supervision = supervisor(self.item)
+        self.supervision = Supervisor(self.item)
         QtCore.QObject.connect(self.update_bt,
                                QtCore.SIGNAL('clicked()'),
-                               self.update)
+                               self.update,
+                               Qt.QueuedConnection)
 
     def update(self):
         ''' Updates the value '''

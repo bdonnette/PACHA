@@ -23,29 +23,35 @@ class HMI_line(object):
     one line in the interaction grid.'''
 
     def __init__(self, text = "line", value = 0):
+        ''' This being an abstract class, not much to say
+        apart from it has a widget including 2 widgets.
+        Suitable for derivation and not for direct usage.'''
         self.value = value
-        self.Form = QtGui.QWidget()
+        self.wForm = QtGui.QWidget()
         #self.Form.setObjectName(text)
-        self.layout = QtGui.QGridLayout(self.Form)
+        self.layout = QtGui.QGridLayout(self.wForm)
         #self.line.setObjectName(text)
-        self.widget1 = QtGui.QWidget(self.Form)
+        self.widget1 = QtGui.QWidget(self.wForm)
         self.pix = pp.p_pixmap(self.widget1)
-        self.layout.addWidget(self.widget1, 1, 1, 1, 4)
+        self.layout.addWidget(self.pix.label, 1, 1)
         self.pix.changeColor(value)
-
         
-if (__name__ == "__main__"):
-    # unit test
+def test():
+    ''' Proceeds unit test'''
     app = QtGui.QApplication(sys.argv)
     line = HMI_line("Ligne", 0)
-    w2 = QtGui.QWidget(line.Form)
+    w2 = QtGui.QWidget(line.wForm)
     button = QtGui.QPushButton("HMI_Line test", w2)
     line.layout.addWidget(w2, 1, 2, 1, 3)
-    line.Form.adjustSize()
-    geo = line.Form.geometry()
+    line.wForm.adjustSize()
+    geo = line.wForm.geometry()
     geo.setWidth(220)
     geo.setHeight(50)
-    line.Form.setGeometry(geo)
+    line.wForm.setGeometry(geo)
 
-    line.Form.show()
+    line.wForm.show()
     sys.exit(app.exec_())
+
+if (__name__ == "__main__"):
+    # unit test
+    test()

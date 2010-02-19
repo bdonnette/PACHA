@@ -35,7 +35,7 @@ class HMI_action(HMI_line):
         self.password = password
         self.command = command
         self.do_button = QtGui.QPushButton(do_label)
-        self.layout.addWidget(self.do_button, 2, 1, 1, 3)
+        self.layout.addWidget(self.do_button, 1, 2, 1, 3)
         self.feedback_command = feedback_command % remote_machine
 
         # next : bind action and button
