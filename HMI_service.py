@@ -18,7 +18,7 @@ from HMI_ssh import *
 
 services = {
     "Apache"	: "httpd",
-    "ssh server": "sshd",
+    "ssh"	: "sshd",
     "ntp"	: "ntpd"
 }
 
@@ -40,9 +40,9 @@ class HMI_service(HMI_line):
         self.password = "toto"
         self.base = "/etc/rc.d/init.d/" + services[service]
         label_base = services[service]
-        self.start_button = QtGui.QPushButton(label_base + " start")
-        self.stop_button = QtGui.QPushButton(label_base + " stop")
-        self.restart_button = QtGui.QPushButton(label_base + " restart")
+        self.start_button = QtGui.QPushButton(service + " start")
+        self.stop_button = QtGui.QPushButton(service + " stop")
+        self.restart_button = QtGui.QPushButton(service + " restart")
         self.layout.addWidget(self.start_button, 1, 3, 1, 1)
         self.layout.addWidget(self.stop_button, 1, 4, 1, 1)
         self.layout.addWidget(self.restart_button, 1, 5, 1, 1)

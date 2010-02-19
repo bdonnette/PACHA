@@ -23,7 +23,6 @@ class HMIapp(object):
 
         self.grid = QtGui.QGridLayout()
         self.gridlist = []
-
         self.wr = QtGui.QWidget()
 
         # Machines HMI elements

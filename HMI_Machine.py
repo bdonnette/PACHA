@@ -16,6 +16,7 @@ from PyQt4 import QtCore, QtGui
 import HMI_dictate as hd
 import PACHA_pixmap as pp
 from HMI_action import *
+from HMI_service import *
 # Signal relay + widget
 
 
@@ -93,14 +94,22 @@ class HMI_Machine(object):
                                         command = "reboot",
                                         do_label = label,
                                         feedback_command = "ping %s")
+        self.grid.addWidget(self.widgets[akey].wForm, 1, 1, 1, 4)
 
+        i = 2
+        # service line
+        # service = "ntp"
+        for service in ["ntp", "Apache", "ssh"]:
+            bkey = "service %s" % service
+            self.widgets[bkey] = HMI_service(host, service)
 
-        self.grid.addWidget(self.widgets[akey].Form, 1, 1, 1, 4)
-        self.dictate = hd.HMI_dictate(host, user, password)
-        self.grid.addWidget(self.dictate.Form, 4, 1, 20, 4)
-        self.RefreshWidget = QtGui.QPushButton("Refresh")
-        self.grid.addWidget(self.RefreshWidget, 25, 1, 1, 4)
-        # True config to be made of HMI_line's
+            self.grid.addWidget(self.widgets[bkey].wForm, i, 1, 1, 5)
+            self.dictate = hd.HMI_dictate(host, user, password)
+            self.grid.addWidget(self.dictate.Form, 1, 6, 20, 4)
+            i +=1
+            # self.RefreshWidget = QtGui.QPushButton("Refresh")
+            # self.grid.addWidget(self.RefreshWidget, 25, 1, 1, 4)
+            # True config to be made of HMI_line's
         self.widget = QtGui.QWidget()
         self.widget.setGeometry(0, 28, 490, 456)
         self.widget.setLayout(self.grid)
