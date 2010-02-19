@@ -34,6 +34,7 @@ class HMI_service(HMI_line):
         - Corresponding action as a shell command
         '''
         HMI_line.__init__(self, remote_machine, 0)
+        self.set_width(5)
 
         self.remote_machine = remote_machine
         self.user = "root"
@@ -43,9 +44,11 @@ class HMI_service(HMI_line):
         self.start_button = QtGui.QPushButton(service + " start")
         self.stop_button = QtGui.QPushButton(service + " stop")
         self.restart_button = QtGui.QPushButton(service + " restart")
-        self.layout.addWidget(self.start_button, 1, 3, 1, 1)
-        self.layout.addWidget(self.stop_button, 1, 4, 1, 1)
-        self.layout.addWidget(self.restart_button, 1, 5, 1, 1)
+    
+        width = self.width
+        self.layout.addWidget(self.start_button, 1, 2, 1, width)
+        self.layout.addWidget(self.stop_button, 1, width + 2, 1, width)
+        self.layout.addWidget(self.restart_button, 1, 2*width + 2, 1, width)
         # geo = self.wForm.geometry()
         # geo.setWidth(450)
         # geo.setHeight(50)

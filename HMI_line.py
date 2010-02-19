@@ -35,7 +35,14 @@ class HMI_line(object):
         self.pix = pp.p_pixmap(self.widget1)
         self.layout.addWidget(self.pix.label, 1, 1)
         self.pix.changeColor(value)
-        
+        self.width = 3
+
+    def set_width(self, width):
+        if (0 < width):
+            self.width = width
+        else:
+            self.width = 3
+
 def test():
     ''' Proceeds unit test'''
     app = QtGui.QApplication(sys.argv)

@@ -42,7 +42,7 @@ class HMIapp(object):
                                    self.toggle)
 
         self.wr.setLayout(self.grid)
-        self.wr.setGeometry(0, 12, 720, 50)
+        self.wr.setGeometry(0, 12, 640, 50)
         self.has_shown = False
         
 

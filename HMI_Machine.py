@@ -94,8 +94,8 @@ class HMI_Machine(object):
                                         command = "reboot",
                                         do_label = label,
                                         feedback_command = "ping %s")
-        self.grid.addWidget(self.widgets[akey].wForm, 1, 1, 1, 4)
-
+        self.grid.addWidget(self.widgets[akey].wForm, 1, 1, 1, 6)
+        max_w = self.widgets[akey].width
         i = 2
         # service line
         # service = "ntp"
@@ -103,15 +103,18 @@ class HMI_Machine(object):
             bkey = "service %s" % service
             self.widgets[bkey] = HMI_service(host, service)
 
-            self.grid.addWidget(self.widgets[bkey].wForm, i, 1, 1, 5)
-            self.dictate = hd.HMI_dictate(host, user, password)
-            self.grid.addWidget(self.dictate.Form, 1, 6, 20, 4)
+            self.grid.addWidget(self.widgets[bkey].wForm, i, 1, 1, 6)
+            if (max_w < self.widgets[bkey].width):
+                max_w = self.widgets[bkey].width
             i +=1
             # self.RefreshWidget = QtGui.QPushButton("Refresh")
             # self.grid.addWidget(self.RefreshWidget, 25, 1, 1, 4)
             # True config to be made of HMI_line's
+        self.dictate = hd.HMI_dictate(host, user, password)
+        x = 3*max_w + 1
+        self.grid.addWidget(self.dictate.Form, 1, x, 20, 9)
         self.widget = QtGui.QWidget()
-        self.widget.setGeometry(0, 28, 490, 456)
+        self.widget.setGeometry(0, 28, 910, 456)
         self.widget.setLayout(self.grid)
 
     def move(self, x, y):

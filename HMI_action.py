@@ -30,12 +30,14 @@ class HMI_action(HMI_line):
         - Corresponding action as a shell command
         '''
         HMI_line.__init__(self, remote_machine, 0)
+        self.set_width(4)
+        width = self.width
         self.remote_machine = remote_machine
         self.user = user
         self.password = password
         self.command = command
         self.do_button = QtGui.QPushButton(do_label)
-        self.layout.addWidget(self.do_button, 1, 2, 1, 3)
+        self.layout.addWidget(self.do_button, 1, 2, 1, width*3)
         self.feedback_command = feedback_command % remote_machine
 
         # next : bind action and button
