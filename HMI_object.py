@@ -49,7 +49,9 @@ class HMI_icon(object):
 class HMI_object(object):
     ''' This class defines an HMI element (on which a line is to be based)
     so as to define a generic HMI element object
-    to be derived into whatever element will have to be'''
+    to be derived into whatever element will have to be.
+    This class does not derive from HMI_icon for it has an HMI_icon, but
+    it is very far from being just an enriched HMI_icon'''
     def __init__(self, label = "default"):
         ''' Gridded line to ease adaptability, with the following inside :
         - Colored icon for signalling,
@@ -61,4 +63,11 @@ class HMI_object(object):
         self.icon = HMI_icon(self.grid)
         # default placing
         self.grid.addWidget(self.icon.label, 1, 1)
-        self.grid.addWidget(self.lable, 2, 1)
+        self.grid.addWidget(self.label, 2, 1)
+
+
+if (__name__ == "__main__"):
+    # unit test
+    app = QtGui.QApplication(sys.argv)
+    objet = HMI_object("test icon")
+    

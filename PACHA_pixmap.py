@@ -55,8 +55,24 @@ if (__name__ == "__main__"):
     w1 = QtGui.QWidget(wid)
     w2 = QtGui.QWidget(wid)
     pix = p_pixmap(w1)
-    pix.changeColor(2)
+    pix.changeColor(0)
     button = QtGui.QPushButton("bouton", w2)
+
+    test_val = 0
+
+    def test_color():
+        global test_val
+        global pix
+        if (test_val < 3):
+            test_val += 1
+        else:
+            test_val = 0
+        pix.changeColor(test_val)
+
+    QtCore.QObject.connect(
+        button,
+        QtCore.SIGNAL('clicked()'),
+        test_color)
 
     line.addWidget(w1, 1, 1)
     line.addWidget(w2, 1, 2, 1, 3)

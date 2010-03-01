@@ -28,10 +28,13 @@ class HMI_service(HMI_line):
     which act accordingly, using rc scripts.'''
     def __init__(self,
                  remote_machine = "localhost",
-                 service = "ntp"):
+                 service = "ntp",
+                 echomode = False):
         ''' Additions from HMI_action :
         - Buttons : start, stop, restart
         - Corresponding action as a shell command
+        - echomode is set for testing (echoes the command only),
+        False for true action
         '''
         HMI_line.__init__(self, remote_machine, 0)
         self.set_width(5)
@@ -70,28 +73,30 @@ class HMI_service(HMI_line):
             QtCore.SIGNAL('clicked()'),
             self.restart_command)
 
-    def do_command(self, action):
+    def do_command(self, action, echomode = False):
         if action in ["start", "stop", "restart"]:
             command = self.base + " %s" % action
-            # ssh = ssh_agent(self.remote_machine,
-            #                 self.user,
-            #                 self.password)
-            # ssh.action(command)
-            print ("Command : %s") % command
+            if (echomode):
+                print ("Command : %s") % command
+            else:
+            ssh = ssh_agent(self.remote_machine,
+                            self.user,
+                            self.password)
+            ssh.action(command)
 
     def start_command(self):
-        self.do_command("start")
+        self.do_command("start", self.echomode)
 
     def stop_command(self):
-        self.do_command("stop")
+        self.do_command("stop", self.echomode)
 
     def restart_command(self):
-        self.do_command("restart")
+        self.do_command("restart", self.echomode)
 
 if (__name__ == "__main__"):
     # unit test
     app = QtGui.QApplication(sys.argv)
     service = HMI_service("192.168.122.14",
-                        "ntp")
+                        "ntp", True)
     service.wForm.show()
     sys.exit(app.exec_())

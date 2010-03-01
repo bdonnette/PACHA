@@ -55,3 +55,8 @@ class ssh_agent (object):
         self.stdout = child.before
         return self.stdout
 
+if (__name__ == "__main__"):
+    # unit test
+    ssh = ssh_agent("192.168.122.14", "root", "toto")
+    print ("Issuing `uname -a` on remote")
+    print ssh.action("uname -a")

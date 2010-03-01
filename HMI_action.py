@@ -30,7 +30,7 @@ class HMI_action(HMI_line):
         - Corresponding action as a shell command
         '''
         HMI_line.__init__(self, remote_machine, 0)
-        self.set_width(4)
+        self.set_width(2)
         width = self.width
         self.remote_machine = remote_machine
         self.user = user
