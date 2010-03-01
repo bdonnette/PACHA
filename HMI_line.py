@@ -44,7 +44,7 @@ class HMI_line(object):
             self.width = 3
 
 def test():
-    ''' Proceeds unit test'''
+    ''' Proceeds the unit test'''
     app = QtGui.QApplication(sys.argv)
     line = HMI_line("Ligne", 0)
     w2 = QtGui.QWidget(line.wForm)

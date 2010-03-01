@@ -14,19 +14,26 @@
 import sys
 from PyQt4 import QtCore, QtGui
 from HMI_line import *
+import random as rnd
 
 class Supervisor(object):
     ''' Global supervisor, to encompass df-like commands and true
     SNMP requests (the latter dependent on the SNMP object) '''
     def __init__(self, supervised_item = {}):
         ''' Input : dictionnary declaring :
-        - Method (ssh / SNMP)
-        - True accessor (command / OID)
+        - Method (ssh / SNMP / local (test only))
+        - True accessor (command / OID / function)
         - Remote
         - Config elements such as normal, warning, alert
         and error levels '''
-        method = supervised_item["method"]
-        accessor = supervised_item["accessor"]
+        self.method = supervised_item["method"]
+        self.accessor = supervised_item["accessor"]
+        if (self.method == "SNMP"):
+            print "Not implemented yet"
+
+    def do_supervision(self):
+        if (self.method == "SNMP"):
+            print "Not implemented yet"
 
 class HMI_supervision(HMI_line):
     ''' This class defines an HMI element (on which a line is to be based)
@@ -50,6 +57,19 @@ class HMI_supervision(HMI_line):
     def update(self):
         ''' Updates the value '''
         if self.item :
-            self.value = self.item.get_value()
+            accession = self.item["accessor"]
+            self.value = accession()
 
+def get_value():
+    ''' Test function only'''
+    return rnd.randint(0,3)
+
+def test():
+    ''' Proceeds the unit test '''
+    app = QtGui.QApplication(sys.argv)
+    svc_item = {"method":"local", "accessor":get_value}
+    sup = HMI_supervision(svc_item)
         
+if (__name__ == "__main__"):
+    # unit test
+    test()
