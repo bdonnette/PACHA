@@ -57,22 +57,24 @@ class HMIapp(object):
                 self.Machines[i].move(
                     self.pos.x(), 
                     self.pos.y() + self.height + 24)
+            self.pos_w = self.Machines[0].pos()
 
 
     def toggle(self, numitem):
         ''' Intelligent display of 1 machine at a time
         '''
         if (self.machine_viewed) :
-            self.Machines[self.machine_viewed - 1].hide()
+            pos = self.Machines[self.machine_viewed - 1].hide()
             if (numitem == self.machine_viewed) :
                 machine_viewed = 0
+                self.pos_w = pos
             else :
                 machine_viewed = numitem
-                self.Machines[machine_viewed - 1].show()
+                self.Machines[machine_viewed - 1].show(pos)
 
         else:
             machine_viewed = numitem
-            self.Machines[machine_viewed - 1].show()
+            self.Machines[machine_viewed - 1].show(self.pos_w)
 
         self.machine_viewed = machine_viewed
 

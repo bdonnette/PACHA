@@ -120,8 +120,14 @@ class HMI_Machine(object):
     def move(self, x, y):
         self.widget.move(x, y+28)
 
-    def show(self):
+    def pos(self):
+        return self.widget.pos()
+
+    def show(self, pos):
+        self.widget.move(pos)
         self.widget.show()
 
     def hide(self):
+        pos = self.widget.pos()
         self.widget.hide()
+        return pos
