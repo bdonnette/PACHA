@@ -79,10 +79,10 @@ class HMI_service(HMI_line):
             if (echomode):
                 print ("Command : %s") % command
             else:
-            ssh = ssh_agent(self.remote_machine,
-                            self.user,
-                            self.password)
-            ssh.action(command)
+                ssh = ssh_agent(self.remote_machine,
+                                self.user,
+                                self.password)
+                ssh.action(command)
 
     def start_command(self):
         self.do_command("start", self.echomode)
@@ -97,6 +97,6 @@ if (__name__ == "__main__"):
     # unit test
     app = QtGui.QApplication(sys.argv)
     service = HMI_service("192.168.122.14",
-                        "ntp", True)
+                          "ntp", True)
     service.wForm.show()
     sys.exit(app.exec_())
