@@ -41,7 +41,6 @@ class MyButton(object):
     def send(self):
         self.button.emit(QtCore.SIGNAL("ToggleMachineView(int)"), self.value)
         # test code for colors
-        self.change_level(42, [0, 33, 66, 100])
 
     def change_level(self, level, scale = []):
         ''' Relays the signal, and is to scale if necessary 
