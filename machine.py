@@ -12,19 +12,42 @@
 #
 
 import HMI_ssh as ssh
+import ConfigParser
 
 class machine(object):
     ''' This class represents a machine, with both its SNMP and ssh
     accesses (any can be left blank though)
     '''
-
-    def __init__(self,
-                 name,
-                 ssh_user, ssh_pass = ""):
-        self.hostname = name
+    def __init__(self, config, label):
+        ''' IN : config, a ConfigParser object
+        Initializes the object from the config file
+        by parsing the "label" section
+        '''
+        self.hostname = label
+        ssh_user = config.get(label, "user", 0)
+        ssh_pass = config.get(label, "password", 0)
         self.agent = ssh.ssh_agent(self.hostname, ssh_user, ssh_pass)
 
         # SNMP does need more only if cyphered
 
 
+
+if (__name__ == "__main__"):
+    # unit test
+    config = ConfigParser.ConfigParser()
+    config.read('example.cfg')
+    try:
+        n_machines = config.get("Machines", "number", 1)
+    except ConfigParser.NoSectionError:
+        n_machines = 0
+
+    m_dict = {}
+    for i in range(int(n_machines)):
+        label = config.get("Machines", "hostname%d" % (i+1), 1)
+        m_dict[label] = machine(config, label)
+        
+    print m_dict
+    n_machines = (m_dict.keys()).__len__()
+
+    print n_machines
         
