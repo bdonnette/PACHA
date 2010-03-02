@@ -28,7 +28,42 @@ class machine(object):
         ssh_pass = config.get(label, "password", 0)
         self.agent = ssh.ssh_agent(self.hostname, ssh_user, ssh_pass)
 
+        i = 0
+        self.actions = []
+        while (True):
+            i += 1
+            section = self.hostname+"_action"
+            lbl = "action%d" % i
+            try :
+                m_action = {"name" : config.get(section, lbl+"_lbl", 0)}
+                m_action["command"] =  config.get(section, lbl+"_cmd", 0)
+            except ConfigParser.NoOptionError :
+                break
+            self.actions.append(m_action)
+
         # SNMP does need more only if cyphered
+        self.supervisions = []
+        while (True):
+            i += 1
+            section = self.hostname+"_supervision"
+            lbl = "supervision%d" % i
+            try :
+                m_supervision = {"name" : config.get(section, lbl, 0)}
+            except (ConfigParser.NoOptionError, 
+                    ConfigParser.NoSectionError) :
+                break
+            self.supervisions.append(m_supervision)
+
+        self.services = []
+        while (True):
+            i += 1
+            section = self.hostname+"_service"
+            lbl = "service%d" % i
+            try :
+                m_service = {"name" : config.get(section, lbl, 0)}
+            except ConfigParser.NoOptionError :
+                break
+            self.services.append(m_service)
 
 
 
