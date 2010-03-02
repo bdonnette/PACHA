@@ -70,7 +70,7 @@ class machine(object):
 if (__name__ == "__main__"):
     # unit test
     config = ConfigParser.ConfigParser()
-    config.read('example.cfg')
+    config.read('config/example.cfg')
     try:
         n_machines = config.get("Machines", "number", 1)
     except ConfigParser.NoSectionError:
