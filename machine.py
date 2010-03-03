@@ -10,11 +10,13 @@
 # GNU General Public License for more details.
 #
 #
-
+''' a Machine is here to instantiate from config files
+so as to be further requested from outer (HMI) classes.
+'''
 import HMI_ssh as ssh
 import ConfigParser
 
-class machine(object):
+class Machine(object):
     ''' This class represents a machine, with both its SNMP and ssh
     accesses (any can be left blank though)
     '''
@@ -43,12 +45,21 @@ class machine(object):
 
         # SNMP does need more only if cyphered
         self.supervisions = []
+        i = 0
         while (True):
             i += 1
             section = self.hostname+"_supervision"
-            lbl = "supervision%d" % i
+            lbl = ("svc%d" % i)+"_%s"
+            print lbl
             try :
-                m_supervision = {"name" : config.get(section, lbl, 0)}
+                m_supervision = {"name" : config.get(section, lbl % "name", 0),
+                                 "param": config.get(section, lbl % "param", 0),
+                                 "method": config.get(section, lbl % "method", 0)
+                                 }
+                if (m_supervision["method"] == "ssh"):
+                    m_supervision["command"] = config.get(
+                        section, lbl % "command", 0)
+                
             except (ConfigParser.NoOptionError, 
                     ConfigParser.NoSectionError) :
                 break
@@ -65,24 +76,20 @@ class machine(object):
                 break
             self.services.append(m_service)
 
-
-
 if (__name__ == "__main__"):
     # unit test
-    config = ConfigParser.ConfigParser()
-    config.read('config/example.cfg')
+    CONFIG = ConfigParser.ConfigParser()
+    CONFIG.read('config/example.cfg')
     try:
-        n_machines = config.get("Machines", "number", 1)
+        N_MACHINES = CONFIG.get("Machines", "number", 1)
     except ConfigParser.NoSectionError:
-        n_machines = 0
+        N_MACHINES = 0
+    M_DICT = {}
+    for i in range(int(N_MACHINES)):
+        label = CONFIG.get("Machines", "hostname%d" % (i+1), 1)
+        M_DICT[label] = Machine(CONFIG, label)
+    print M_DICT
+    N_MACHINES = (M_DICT.keys()).__len__()
 
-    m_dict = {}
-    for i in range(int(n_machines)):
-        label = config.get("Machines", "hostname%d" % (i+1), 1)
-        m_dict[label] = machine(config, label)
-        
-    print m_dict
-    n_machines = (m_dict.keys()).__len__()
-
-    print n_machines
+    print N_MACHINES
         
