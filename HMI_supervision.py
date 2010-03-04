@@ -27,7 +27,7 @@ class Supervisor(object):
         - Config elements such as normal, warning, alert
         and error levels '''
         self.method = supervised_item["method"]
-        self.accessor = supervised_item["accessor"]
+        self.accessor = supervised_item["command"]
         if (self.method == "SNMP"):
             print "Not implemented yet"
 
@@ -39,36 +39,46 @@ class HMI_supervision(HMI_line):
     ''' This class defines an HMI element (on which a line is to be based)
     so as to define a generic supervision HMI element object
     to be derived into whatever element will have to be'''
-    def __init__(self, supervised_item = {}):
+    def __init__(self, supervised_item = {}, hostname = "localhost"):
         ''' Adds the following to HMI_object class :
         - "Update" button
         '''
-        HMI_line.__init__(self, supervised_item["remote_machine"], 0)
+#        supervised_item["remote_machine"] = hostname
+
+        HMI_line.__init__(self, hostname, 0)
         
         self.update_bt = QtGui.QPushButton("Actualiser")
-        self.grid.addWidget(self.update_bt, 1, 3)
+        self.layout.addWidget(self.update_bt, 1, 3)
         self.item = supervised_item
         self.supervision = Supervisor(self.item)
         QtCore.QObject.connect(self.update_bt,
                                QtCore.SIGNAL('clicked()'),
                                self.update,
-                               Qt.QueuedConnection)
+                               QtCore.Qt.QueuedConnection)
 
     def update(self):
         ''' Updates the value '''
         if self.item :
-            accession = self.item["accessor"]
+            accession = self.item["command"]
             self.value = accession()
+            self.pix.changeColor(self.value)
 
 def get_value():
     ''' Test function only'''
-    return rnd.randint(0,3)
+    random_val = rnd.randint(0,2)
+    return random_val
 
 def test():
     ''' Proceeds the unit test '''
+#not finished yet
     app = QtGui.QApplication(sys.argv)
-    svc_item = {"method":"local", "accessor":get_value}
-    sup = HMI_supervision(svc_item)
+    svc_item = {"method":"local", "command":get_value}
+    sup = HMI_supervision(svc_item, "localhost")
+    w2 = QtGui.QWidget()
+    w2.setLayout(sup.layout)
+    w2.setGeometry(0, 12, 480, 32)
+    w2.show()
+    sys.exit(app.exec_())
         
 if (__name__ == "__main__"):
     # unit test
