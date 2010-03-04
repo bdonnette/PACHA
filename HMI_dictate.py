@@ -18,9 +18,7 @@ import HMI_ssh as ssh
 class HMI_dictate(object):
     ''' This class defines an HMI element to host command line typing
     and feedback, for ssh commands issued upon sysadmins call '''
-    def __init__(self, 
-                 host,
-                 user, password = ""):
+    def __init__(self, agent):
         ''' HMI elemens in place here :
         - "shell" text input line
         - text feedback
@@ -42,7 +40,8 @@ class HMI_dictate(object):
         self.feedback.setGeometry(QtCore.QRect(0, 0, 480, 270))
         self.feedback.setReadOnly(True)
         self.feedback.setObjectName("Feedback")
-        self.agent = ssh.ssh_agent(host, user, password)
+#        self.agent = ssh.ssh_agent(host, user, password)
+        self.agent = agent
 
         QtCore.QMetaObject.connectSlotsByName(self.Form)
         QtCore.QObject.connect(
@@ -59,7 +58,8 @@ class HMI_dictate(object):
 
 if (__name__ == "__main__"):
     # test
-    app = QtGui.QApplication(sys.argv)
-    hd = HMI_dictate("192.168.122.14", "root", "toto")
-    hd.Form.show()
-    sys.exit(app.exec_())
+    APP = QtGui.QApplication(sys.argv)
+    AGENT = ssh.ssh_agent("192.168.122.14", "root", "toto")
+    HD = HMI_dictate(AGENT)
+    HD.Form.show()
+    sys.exit(APP.exec_())

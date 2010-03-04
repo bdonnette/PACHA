@@ -34,12 +34,13 @@ class Machine(object):
         self.actions = []
         while (True):
             i += 1
-            section = self.hostname+"_action"
+            section = self.hostname + "_action"
             lbl = "action%d" % i
             try :
                 m_action = {"name" : config.get(section, lbl+"_lbl", 0)}
                 m_action["command"] =  config.get(section, lbl+"_cmd", 0)
-            except ConfigParser.NoOptionError :
+            except (ConfigParser.NoOptionError,
+                    ConfigParser.NoSectionError) :
                 break
             self.actions.append(m_action)
 
@@ -50,7 +51,6 @@ class Machine(object):
             i += 1
             section = self.hostname+"_supervision"
             lbl = ("svc%d" % i)+"_%s"
-            print lbl
             try :
                 m_supervision = {"name" : config.get(section, lbl % "name", 0),
                                  "param": config.get(section, lbl % "param", 0),
@@ -72,7 +72,8 @@ class Machine(object):
             lbl = "service%d" % i
             try :
                 m_service = {"name" : config.get(section, lbl, 0)}
-            except ConfigParser.NoOptionError :
+            except (ConfigParser.NoOptionError,
+                    ConfigParser.NoSectionError) :
                 break
             self.services.append(m_service)
 
