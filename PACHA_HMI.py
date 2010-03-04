@@ -84,6 +84,9 @@ class Hmi_app(object):
             QtCore.QObject.connect(a_hmi_machine.synthex.button,
                                    QtCore.SIGNAL("ToggleMachineView(int)"),
                                    self.toggle)
+            QtCore.QObject.connect(a_hmi_machine.widget,
+                                   QtCore.SIGNAL("CloseMachineView()"),
+                                   self.quit_bt)
         self.main_widget.setLayout(self.grid)
         self.main_widget.setGeometry(0, 12, 640, 50)
         self.has_shown = False
@@ -105,7 +108,6 @@ class Hmi_app(object):
                     self.pos.y() + self.height + 24)
             self.pos_w = self.all_machines[0]["HMI"].pos()
 
-
     def toggle(self, numitem):
         ''' Intelligent display of 1 machine at a time
         '''
@@ -122,6 +124,12 @@ class Hmi_app(object):
             self.all_machines[machine_viewed - 1]["HMI"].show(self.pos_w)
 
         self.machine_viewed = machine_viewed
+
+    def quit_bt(self):
+        ''' To overload the QUIT event so as to do the same as button
+        re-press'''
+        self.pos_w = self.all_machines[self.machine_viewed - 1]["HMI"].hide()
+        self.machine_viewed = 0
 
 #HMI = Hmi_app(3)
 # to become :

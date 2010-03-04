@@ -37,8 +37,8 @@ class Machine(object):
             section = self.hostname + "_action"
             lbl = "action%d" % i
             try :
-                m_action = {"name" : config.get(section, lbl+"_lbl", 0)}
-                m_action["command"] =  config.get(section, lbl+"_cmd", 0)
+                m_action = {"name" : config.get(section, lbl + "_lbl", 0)}
+                m_action["command"] = config.get(section, lbl + "_cmd", 0)
             except (ConfigParser.NoOptionError,
                     ConfigParser.NoSectionError) :
                 break
@@ -52,10 +52,11 @@ class Machine(object):
             section = self.hostname+"_supervision"
             lbl = ("svc%d" % i)+"_%s"
             try :
-                m_supervision = {"name" : config.get(section, lbl % "name", 0),
-                                 "param": config.get(section, lbl % "param", 0),
-                                 "method": config.get(section, lbl % "method", 0)
-                                 }
+                m_supervision = {
+                    "name" : config.get(section, lbl % "name", 0),
+                    "param": config.get(section, lbl % "param", 0),
+                    "method": config.get(section, lbl % "method", 0)
+                    }
                 if (m_supervision["method"] == "ssh"):
                     m_supervision["command"] = config.get(
                         section, lbl % "command", 0)

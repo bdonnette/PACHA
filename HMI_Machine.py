@@ -84,42 +84,6 @@ class HMI_Machine(object):
         else:
             self.synthex = MyButton(name, number)
 
-    def config(self, machine):
-        ''' old config, to disappear soon'''
-        dkey = "machine %s : %s"
-
-        host = "192.168.122.14"
-        user = "root"
-        password = "toto"
-        command = "reboot"
-        akey = dkey % (host, command)
-        label = "Action : %s" % command
-        self.widgets[akey] = HMI_action(host, user, password,
-                                        command = "reboot",
-                                        do_label = label,
-                                        feedback_command = "ping %s")
-        self.grid.addWidget(self.widgets[akey].wForm, 1, 1, 1, 6)
-        max_w = self.widgets[akey].width
-        i = 2
-        # services
-        for a_service in ["ntp", "Apache", "ssh"]:
-            bkey = "service %s" % a_service
-            self.widgets[bkey] = HMI_service(host, a_service)
-
-            self.grid.addWidget(self.widgets[bkey].wForm, i, 1, 1, 6)
-            if (max_w < self.widgets[bkey].width):
-                max_w = self.widgets[bkey].width
-            i += 1
-            # self.RefreshWidget = QtGui.QPushButton("Refresh")
-            # self.grid.addWidget(self.RefreshWidget, 25, 1, 1, 4)
-            # True config to be made of HMI_line's
-        self.dictate = hd.HMI_dictate(host, user, password)
-        pos_x = 3 * max_w + 1
-        self.grid.addWidget(self.dictate.Form, 1, pos_x, 20, 9)
-        self.widget = QtGui.QWidget()
-        self.widget.setGeometry(0, 28, 910, 456)
-        self.widget.setLayout(self.grid)
-
     def configure(self, a_machine):
         ''' Configure from a machine object '''
         # Actions
@@ -159,7 +123,7 @@ class HMI_Machine(object):
         self.widget = QtGui.QWidget()
         self.widget.setGeometry(0, 28, 910, 456)
         self.widget.setLayout(self.grid)
-
+        self.widget.closeEvent = self.quit
 
     def move(self, pos_x, pos_y):
         ''' provides initial position'''
@@ -179,3 +143,8 @@ class HMI_Machine(object):
         pos = self.widget.pos()
         self.widget.hide()
         return pos
+
+    def quit(self, event):
+        ''' To overload quit sig from machine window'''
+        self.widget.emit(QtCore.SIGNAL("CloseMachineView()"))
+        event.ignore()

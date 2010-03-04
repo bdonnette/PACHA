@@ -46,6 +46,24 @@ class HMI_action(HMI_line):
             QtCore.SIGNAL('clicked()'),
             self.do_command)
 
+    def __init__(self, agent, command, label, feedback_command):
+        ''' Init through an ssh agent instead of host and co
+        passed by through the config file'''
+        #first init inside
+        self.agent = agent
+        HMI_line.__init__(self, agent.host, 0)
+        self.set_width(2)
+        width = self.width
+        self.command = command
+        self.do_button = QtGui.QPushButton(label)
+        self.layout.addWidget(self.do_button, 1, 2, 1, width*3)
+        self.feedback_command = feedback_command % agent.host      
+        # next : bind action and button
+        QtCore.QObject.connect(
+            self.do_button,
+            QtCore.SIGNAL('clicked()'),
+            self.do_command)
+  
     def do_command(self):
         ssh = ssh_agent(self.remote_machine,
                         self.user,
