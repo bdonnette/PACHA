@@ -62,6 +62,8 @@ class HMI_supervision(HMI_line):
             accession = self.item["command"]
             self.value = accession()
             self.pix.changeColor(self.value)
+            signal_str = self.item["qsignal"] + "(int)"
+            self.update_bt.emit(QtCore.SIGNAL(signal_str), self.value)
 
 def get_value():
     ''' Test function only'''
@@ -71,13 +73,22 @@ def get_value():
 def test():
     ''' Proceeds the unit test '''
 #not finished yet
+    def print_sig(lev):
+        print "Signal raised, val = %d" % lev
+
     app = QtGui.QApplication(sys.argv)
-    svc_item = {"method":"local", "command":get_value}
+    svc_item = {"method":"local",
+                "command":get_value,
+                "qsignal":"testing123"}
     sup = HMI_supervision(svc_item, "localhost")
     w2 = QtGui.QWidget()
+    QtCore.QObject.connect(sup.update_bt, 
+                           QtCore.SIGNAL(svc_item["qsignal"]+"(int)"), 
+                           print_sig)
     w2.setLayout(sup.layout)
     w2.setGeometry(0, 12, 480, 32)
     w2.show()
+
     sys.exit(app.exec_())
         
 if (__name__ == "__main__"):
