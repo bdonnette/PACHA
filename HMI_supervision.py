@@ -39,14 +39,15 @@ class HMI_supervision(HMI_line):
     ''' This class defines an HMI element (on which a line is to be based)
     so as to define a generic supervision HMI element object
     to be derived into whatever element will have to be'''
-    def __init__(self, supervised_item = {}, hostname = "localhost"):
+    def __init__(self, agent, feedback_line = None, supervised_item = {}):
         ''' Adds the following to HMI_object class :
         - "Update" button
         '''
 #        supervised_item["remote_machine"] = hostname
 
-        HMI_line.__init__(self, hostname, 0)
-        
+        HMI_line.__init__(self, agent.host, 0)
+        self.feedback_line = feedback_line
+        self.agent = agent
         self.update_bt = QtGui.QPushButton("Actualiser")
         self.layout.addWidget(self.update_bt, 1, 3)
         self.item = supervised_item
@@ -60,10 +61,16 @@ class HMI_supervision(HMI_line):
         ''' Updates the value '''
         if self.item :
             accession = self.item["command"]
-            self.value = accession()
+            print accession
+            ret = self.agent.action(accession)
+            if (self.feedback_line != None):
+                self.feedback_line.setPlainText(QtCore.QString(ret))
+            else:
+                print ret
             self.pix.changeColor(self.value)
-            signal_str = self.item["qsignal"] + "(int)"
-            self.update_bt.emit(QtCore.SIGNAL(signal_str), self.value)
+            signal_str = self.item["qsignal"] + "(int,str)"
+            self.update_bt.emit(QtCore.SIGNAL(signal_str), 
+                                self.value, signal_str)
 
 def get_value():
     ''' Test function only'''
@@ -73,8 +80,8 @@ def get_value():
 def test():
     ''' Proceeds the unit test '''
 #not finished yet
-    def print_sig(lev):
-        print "Signal raised, val = %d" % lev
+    def print_sig(lev, sig):
+        print "Signal raised, sig %s, val = %d" % (sig, lev)
 
     app = QtGui.QApplication(sys.argv)
     svc_item = {"method":"local",
@@ -83,7 +90,7 @@ def test():
     sup = HMI_supervision(svc_item, "localhost")
     w2 = QtGui.QWidget()
     QtCore.QObject.connect(sup.update_bt, 
-                           QtCore.SIGNAL(svc_item["qsignal"]+"(int)"), 
+                           QtCore.SIGNAL(svc_item["qsignal"]+"(int,str)"), 
                            print_sig)
     w2.setLayout(sup.layout)
     w2.setGeometry(0, 12, 480, 32)

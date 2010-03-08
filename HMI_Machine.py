@@ -23,7 +23,7 @@ import HMI_service as Hse
 class MyButton(object):
     ''' This class makes the button ready for link
     between a button click and a parameter '''
-    def __init__(self, text = "", value = 0):
+    def __init__(self, text = "", value = 0, qsig = ""):
         ''' Constructor, wwith args :
         text : label
         value : id sent in the signal
@@ -47,8 +47,7 @@ class MyButton(object):
     def send(self):
         ''' signal, made so as to send another signal (valued) '''
         self.button.emit(QtCore.SIGNAL("ToggleMachineView(int)"), self.value)
-        # test code for colors
-
+    
     def change_level(self, level, scale = []):
         ''' Relays the signal, and is to scale if necessary 
         Substracts one for the first element is 0, not 1'''
@@ -64,7 +63,6 @@ class MyButton(object):
             if (2 < level):
                 level = 3
         self.pix.changeColor(level-1)
-
 
 class HMI_Machine(object):
     ''' Class to embark Widgets related to a single machine, making the
@@ -83,6 +81,18 @@ class HMI_Machine(object):
             self.synthex = MyButton("  Machine %d" % (number), number)
         else:
             self.synthex = MyButton(name, number)
+        self.svc_values = {}
+        self.nada = []
+        self.synthetic_value = 0
+        self.widget = QtGui.QWidget()
+        self.feedback_line = QtGui.QTextEdit(self.widget)
+
+    def update_val(self, level, signal_str):
+        self.svc_values[signal_str] = level
+        max_val = max(self.svc_values.values())
+        if (max_val != self.synthetic_value):
+            self.synthetic_value = max_val
+            self.synthex.change_level(max_val)
 
     def configure(self, a_machine):
         ''' Configure from a machine object '''
@@ -96,8 +106,10 @@ class HMI_Machine(object):
             self.widgets[akey] = Hac.HMI_action(a_machine.agent,
                                                 an_action["command"],
                                                 label,
-                                                feedback_command = "ping %s")
+                                                "ping %s",
+                                                self.feedback_line)
             self.grid.addWidget(self.widgets[akey].wForm, i, 1, 1, 6)
+            i += 1
             if (max_w < self.widgets[akey].width):
                 max_w = self.widgets[akey].width
 
@@ -105,25 +117,45 @@ class HMI_Machine(object):
         for a_supervision in a_machine.supervisions:
             akey = "mach%s_svc%s" % (a_machine.hostname,
                                      a_supervision["name"])
-            self.widgets[akey] = Hsu.HMI_supervision(a_supervision,
-                                                     a_machine.hostname)
+            self.widgets[akey] = Hsu.HMI_supervision(a_machine.agent,
+                                                     self.feedback_line,
+                                                     a_supervision)
+            signal_str = self.widgets[akey].item["qsignal"] + "(int,str)"
+            QtCore.QObject.connect(self.synthex.button,
+                                   QtCore.SIGNAL(signal_str),
+                                   self.update_val)
+            self.grid.addWidget(self.widgets[akey].wForm, i, 1, 1, 6)
+            i += 1
+            if (max_w < self.widgets[akey].width):
+                max_w = self.widgets[akey].width
         # Services
         for a_service in a_machine.services:
             akey = "mach%s_srv%s" % (a_machine.hostname,
                                      a_service["name"])
-            self.widgets[akey] = Hse.HMI_service(
-                )
+            self.widgets[akey] = Hse.HMI_service(a_machine.agent,
+                                                 a_service,
+                                                 self.feedback_line)
             self.grid.addWidget(self.widgets[bkey].wForm, i, 1, 1, 6)
+            i += 1
             if (max_w < self.widgets[akey].width):
                 max_w = self.widgets[akey].width
         # Machine has an ssh agent ready for use
         self.dictate = hd.HMI_dictate(a_machine.agent)
         pos_x = 3 * max_w + 1
         self.grid.addWidget(self.dictate.Form, 1, pos_x, 20, 9)
-        self.widget = QtGui.QWidget()
         self.widget.setGeometry(0, 28, 910, 456)
         self.widget.setLayout(self.grid)
         self.widget.closeEvent = self.quit
+        h_left = self.dictate.Form.height() - i * 25
+        if (0 < h_left):
+            wd=  QtGui.QWidget()
+            wd.setMinimumSize(QtCore.QSize(2, h_left))
+            self.nada.append(wd)
+            self.grid.addWidget(wd, i, 1, 1, 1)
+            i += 1
+        self.feedback_line.setMaximumSize(QtCore.QSize(16777215, 81))
+        self.grid.addWidget(self.feedback_line, i+1, 1, 3, -1)
+        self.feedback_line.setReadOnly(True)
 
     def move(self, pos_x, pos_y):
         ''' provides initial position'''

@@ -15,6 +15,7 @@ so as to be further requested from outer (HMI) classes.
 '''
 import HMI_ssh as ssh
 import ConfigParser
+import string
 
 class Machine(object):
     ''' This class represents a machine, with both its SNMP and ssh
@@ -42,6 +43,8 @@ class Machine(object):
             except (ConfigParser.NoOptionError,
                     ConfigParser.NoSectionError) :
                 break
+            qsignal = "ac%s_%s" % (self.hostname, m_action["name"])
+            m_action["qsignal"] = string.replace(qsignal, " ", "_")
             self.actions.append(m_action)
 
         # SNMP does need more only if cyphered
@@ -64,6 +67,10 @@ class Machine(object):
             except (ConfigParser.NoOptionError, 
                     ConfigParser.NoSectionError) :
                 break
+            qsignal = "sv%s_%s_%s" % (self.hostname, 
+                                      m_supervision["name"],
+                                      m_supervision["param"])
+            m_supervision["qsignal"] = string.replace(qsignal, " ", "_")
             self.supervisions.append(m_supervision)
 
         self.services = []
@@ -76,22 +83,26 @@ class Machine(object):
             except (ConfigParser.NoOptionError,
                     ConfigParser.NoSectionError) :
                 break
+            qsignal = "sr%s_%s" % (self.hostname, m_service["name"])
+            m_service["qsignal"] = string.replace(qsignal, " ", "_")
             self.services.append(m_service)
 
 if (__name__ == "__main__"):
     # unit test
     CONFIG = ConfigParser.ConfigParser()
     CONFIG.read('config/example.cfg')
-    try:
-        N_MACHINES = CONFIG.get("Machines", "number", 1)
-    except ConfigParser.NoSectionError:
-        N_MACHINES = 0
+    i = 0
     M_DICT = {}
-    for i in range(int(N_MACHINES)):
-        label = CONFIG.get("Machines", "hostname%d" % (i+1), 1)
-        M_DICT[label] = Machine(CONFIG, label)
-    print M_DICT
+    while (True):
+        try :
+            label = CONFIG.get("Machines", "hostname%d" % (i+1), 1)
+            M_DICT[label] = Machine(CONFIG, label)
+            i += 1
+        except (ConfigParser.NoSectionError,
+                ConfigParser.NoOptionError):
+            break
+    for MAC in M_DICT.keys():
+        print M_DICT[MAC].__dict__
+    
     N_MACHINES = (M_DICT.keys()).__len__()
-
     print N_MACHINES
-        

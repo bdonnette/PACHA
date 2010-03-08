@@ -27,9 +27,9 @@ class HMI_service(HMI_line):
     so as to show start, stop and restart service buttons
     which act accordingly, using rc scripts.'''
     def __init__(self,
-                 remote_machine = "localhost",
-                 service = "ntp",
-                 echomode = False):
+                 agent,
+                 service,
+                 echo_line = None):
         ''' Additions from HMI_action :
         - Buttons : start, stop, restart
         - Corresponding action as a shell command
@@ -39,10 +39,8 @@ class HMI_service(HMI_line):
         HMI_line.__init__(self, remote_machine, 0)
         self.set_width(5)
 
-        self.remote_machine = remote_machine
-        self.user = "root"
-        self.password = "toto"
-        self.base = "/etc/rc.d/init.d/" + services[service]
+        self.remote_machine = agent.hostname
+        self.base = "/etc/rc.d/init.d/" + services[service["name"]]
         label_base = services[service]
         self.start_button = QtGui.QPushButton(service + " start")
         self.stop_button = QtGui.QPushButton(service + " stop")
