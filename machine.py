@@ -63,6 +63,22 @@ class Machine(object):
                 if (m_supervision["method"] == "ssh"):
                     m_supervision["command"] = config.get(
                         section, lbl % "command", 0)
+                    try :
+                        m_supervision["field"] = int(config.get(
+                            section, lbl % "field", 0)) - 1
+                    except ConfigParser.NoOptionError:
+                        m_supervision["field"] = 0
+                    try :
+                        m_supervision["sep"] = config.get(
+                            section, lbl % "sep", 0)
+                    except ConfigParser.NoOptionError:
+                        m_supervision["sep"] = ""
+                m_supervision["levels"] = [
+                    int(config.get(section, lbl%"low_green")),
+                    int(config.get(section, lbl%"low_orange")),
+                    int(config.get(section, lbl%"low_red")),
+                    int(config.get(section, lbl%"low_undef"))
+                    ]
                 
             except (ConfigParser.NoOptionError, 
                     ConfigParser.NoSectionError) :

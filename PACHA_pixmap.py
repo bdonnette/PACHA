@@ -35,17 +35,33 @@ class p_pixmap(object):
         self.label.setPixmap(self.pixmaps[3])
 
 
-    def changeColor(self, num):
+    def changeColor(self, level, scale = []):
         ''' Changes the color of the icon 
-        0 : non reachable / arg problem
-        1 : normal
-        2 : warning
-        3 : Alert '''
-        if (3 < num or num < 0):
-            num = 3
+        3 : non reachable / arg problem
+        0 : normal
+        1 : warning
+        2 : Alert '''
 
-        self.num = num
-        self.label.setPixmap(self.pixmaps[num])
+        num = int(level)
+        if (scale == []):
+            if (3 < num or num < 0):
+                num = 3
+
+            self.num = num
+        else:
+            if (num < scale[0]):
+                self.num = 3
+            elif (num < scale[1]):
+                self.num = 0
+            elif (num < scale[2]):
+                self.num = 1
+            elif (num < scale[3]):
+                self.num = 2
+            else :
+                self.num = 3
+        print num, self.num, scale
+        self.label.setPixmap(self.pixmaps[self.num])
+        return self.num
 
 if (__name__ == "__main__"):
     # unit test

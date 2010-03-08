@@ -62,7 +62,7 @@ class MyButton(object):
             level = len(filter(test_level, scale))
             if (2 < level):
                 level = 3
-        self.pix.changeColor(level-1)
+        self.pix.changeColor(level)
 
 class HMI_Machine(object):
     ''' Class to embark Widgets related to a single machine, making the
@@ -89,7 +89,9 @@ class HMI_Machine(object):
 
     def update_val(self, level, signal_str):
         self.svc_values[signal_str] = level
+        print self.svc_values
         max_val = max(self.svc_values.values())
+        print max_val
         if (max_val != self.synthetic_value):
             self.synthetic_value = max_val
             self.synthex.change_level(max_val)
@@ -121,7 +123,8 @@ class HMI_Machine(object):
                                                      self.feedback_line,
                                                      a_supervision)
             signal_str = self.widgets[akey].item["qsignal"] + "(int,str)"
-            QtCore.QObject.connect(self.synthex.button,
+            print "I support : %s" % signal_str
+            QtCore.QObject.connect(self.widgets[akey].update_bt,
                                    QtCore.SIGNAL(signal_str),
                                    self.update_val)
             self.grid.addWidget(self.widgets[akey].wForm, i, 1, 1, 6)

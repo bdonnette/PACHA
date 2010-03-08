@@ -67,8 +67,17 @@ class HMI_supervision(HMI_line):
                 self.feedback_line.setPlainText(QtCore.QString(ret))
             else:
                 print ret
-            self.pix.changeColor(self.value)
+            field = self.item["field"]
+            sep = self.item["sep"]
+            if (field != 0) :
+                if (sep):
+                    val = (ret.split(sep)[field]).strip("%")
+                else:
+                    val = (ret.split()[field]).strip("%")
+                print val
+            self.value = self.pix.changeColor(val, self.item["levels"])
             signal_str = self.item["qsignal"] + "(int,str)"
+            print "send : %s val %d" % (signal_str, self.value)
             self.update_bt.emit(QtCore.SIGNAL(signal_str), 
                                 self.value, signal_str)
 
