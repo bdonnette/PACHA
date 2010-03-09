@@ -86,6 +86,59 @@ class HMI_Machine(object):
         self.synthetic_value = 0
         self.widget = QtGui.QWidget()
         self.feedback_line = QtGui.QTextEdit(self.widget)
+        self.timer = QtCore.QTimer(self.synthex.button)
+        QtCore.QObject.connect(
+            self.button,
+            QtCore.SIGNAL('clicked()'),
+            self.send)
+
+    def send(self):
+        ''' signal, made so as to send another signal (valued) '''
+        self.button.emit(QtCore.SIGNAL("ToggleMachineView(int)"), self.value)
+    
+    def change_level(self, level, scale = []):
+        ''' Relays the signal, and is to scale if necessary 
+        Substracts one for the first element is 0, not 1'''
+        def test_level(lev):
+            ''' Helper for filter'''
+            return (lev < level)
+
+        if len(scale) != 4:
+            if (level < 0 or 2 < level):
+                level = 3
+        else:
+            level = len(filter(test_level, scale))
+            if (2 < level):
+                level = 3
+        self.pix.changeColor(level)
+
+class HMI_Machine(object):
+    ''' Class to embark Widgets related to a single machine, making the
+    final outlook and code easy.
+    The HMI element shows machine # number, has a grid widget,
+    and a synthex, to be displayed on the general widget
+    '''
+    def __init__(self, number = 1, name = ""):
+        ''' Constructor :
+        number of the machine (Id sent via signal)
+        name of the interface'''
+        self.number  = number
+        self.grid    = QtGui.QGridLayout()
+        self.widgets = {}
+        if (name == ""):
+            self.synthex = MyButton("  Machine %d" % (number), number)
+        else:
+            self.synthex = MyButton(name, number)
+        self.svc_values = {}
+        self.nada = []
+        self.synthetic_value = 0
+        self.widget = QtGui.QWidget()
+        self.feedback_line = QtGui.QTextEdit(self.widget)
+        self.timer = QtCore.QTimer()
+        self.timer_started = False
+        QtCore.QObject.connect(self.timer,
+                               QtCore.SIGNAL("timeout()"),
+                               self.fetch_and_update)
 
     def update_val(self, level, signal_str):
         self.svc_values[signal_str] = level
@@ -94,7 +147,7 @@ class HMI_Machine(object):
         print max_val
         if (max_val != self.synthetic_value):
             self.synthetic_value = max_val
-            self.synthex.change_level(max_val)
+        self.synthex.change_level(max_val)
 
     def configure(self, a_machine):
         ''' Configure from a machine object '''
@@ -159,6 +212,8 @@ class HMI_Machine(object):
         self.feedback_line.setMaximumSize(QtCore.QSize(16777215, 81))
         self.grid.addWidget(self.feedback_line, i+1, 1, 3, -1)
         self.feedback_line.setReadOnly(True)
+        self.timer.setSingleShot(True)
+        self.timer.start(100)
 
     def move(self, pos_x, pos_y):
         ''' provides initial position'''
@@ -178,6 +233,18 @@ class HMI_Machine(object):
         pos = self.widget.pos()
         self.widget.hide()
         return pos
+
+    def fetch_and_update(self):
+        if (not self.timer_started):
+            self.timer.stop()
+            self.timer.setSingleShot(False)
+            self.timer_started = True
+            self.timer.start(8000)
+        for i in self.widgets.values():
+            try:
+                i.update()
+            except AttributeError:
+                pass
 
     def quit(self, event):
         ''' To overload quit sig from machine window'''
