@@ -39,8 +39,8 @@ class ssh_agent (object):
                     user, password, host, command)
             child = sp.Popen(full_cmd, shell = True, 
                              stdin = sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE)
+            l = ""
             if (child.wait == 0):
-                l = ""
                 self.stdout = l.join(child.stdout.readlines()).strip('\n')
             else:
                 self.stdout = l.join(child.stderr.readlines()).strip('\n')
