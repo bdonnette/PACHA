@@ -38,7 +38,7 @@ class ssh_agent (object):
                 full_cmd = "c:\Python26\plink.exe -l %s -pw %s %s %s" % (
                     user, password, host, command)
             child = sp.Popen(full_cmd, shell = True, 
-                             stdin = PIPE, stdout=PIPE, stderr=PIPE)
+                             stdin = sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE)
             if (child.wait == 0):
                 l = ""
                 self.stdout = l.join(child.stdout.readlines()).strip('\n')
