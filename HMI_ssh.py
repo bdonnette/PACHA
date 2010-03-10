@@ -11,8 +11,8 @@
 #
 #
 
-import pexpect
 import getpass, os
+import subprocess as sp
 
 class ssh_agent (object):
     ''' This class handles ssh. Use password='' to go through
@@ -23,36 +23,54 @@ class ssh_agent (object):
         self.user = user
         self.password = password
         self.host = host
+        self.is_win32 = (os.name == "nt")
 
     def action(self, command="df"):
         user = self.user
         host = self.host
         password = self.password
 
-        ssh_newkey = 'Are you sure you want to continue connecting'
-        child = pexpect.spawn('ssh -l %s %s %s'%(user, host, command))
+        if (self.is_win32):
+            if (password == ""):
+                full_cmd = "c:\Python26\plink.exe -l %s %s %s" % (
+                    user, host, command)
+            else:
+                full_cmd = "c:\Python26\plink.exe -l %s -pw %s %s %s" % (
+                    user, password, host, command)
+            child = sp.Popen(full_cmd, shell = True, 
+                             stdin = PIPE, stdout=PIPE, stderr=PIPE)
+            if (child.wait == 0):
+                l = ""
+                self.stdout = l.join(child.stdout.readlines()).strip('\n')
+            else:
+                self.stdout = l.join(child.stderr.readlines()).strip('\n')
+        else:
+            import pexpect
 
-        if (password != ""):
-            i = child.expect([pexpect.TIMEOUT, ssh_newkey, 'password: '])
-            if i == 0: # Timeout
-                print 'ERROR!'
-                print 'SSH could not login. Here is what SSH said:'
-                print child.before, child.after
-                return None
-            if i == 1: # SSH does not have the public key. Just accept it.
-                child.sendline ('yes')
-                child.expect ('password: ')
-                i = child.expect([pexpect.TIMEOUT, 'password: '])
+            ssh_newkey = 'Are you sure you want to continue connecting'
+            child = pexpect.spawn('ssh -l %s %s %s'%(user, host, command))
+
+            if (password != ""):
+                i = child.expect([pexpect.TIMEOUT, ssh_newkey, 'password: '])
                 if i == 0: # Timeout
                     print 'ERROR!'
                     print 'SSH could not login. Here is what SSH said:'
                     print child.before, child.after
-                    return None       
-            child.sendline(password)
+                    return None
+                if i == 1: # SSH does not have the public key. Just accept it.
+                    child.sendline ('yes')
+                    child.expect ('password: ')
+                    i = child.expect([pexpect.TIMEOUT, 'password: '])
+                    if i == 0: # Timeout
+                        print 'ERROR!'
+                        print 'SSH could not login. Here is what SSH said:'
+                        print child.before, child.after
+                        return None       
+                    child.sendline(password)
 
-        child.expect(pexpect.EOF)
-        
-        self.stdout = child.before
+            child.expect(pexpect.EOF)        
+            self.stdout = child.before
+
         return self.stdout
 
 if (__name__ == "__main__"):
