@@ -20,34 +20,9 @@ class HMI_action(HMI_line):
     ''' This class defines an HMI element (on which a line is to be based)
     so as to define a generic active HMI element object
     to be derived into whatever element will have to be'''
-    def __init__(self,
-                 remote_machine = "localhost",
-                 user = "root", password = "",
-                 do_label = "do", command = "echo toto",
-                 feedback_command = "ping %s"):
-        ''' Additions from HMI_line :
-        - "Do it" button
-        - Corresponding action as a shell command
-        '''
-        HMI_line.__init__(self, remote_machine, 0)
-        self.set_width(2)
-        width = self.width
-        self.remote_machine = remote_machine
-        self.user = user
-        self.password = password
-        self.command = command
-        self.do_button = QtGui.QPushButton(do_label)
-        self.layout.addWidget(self.do_button, 1, 2, 1, width*3)
-        self.feedback_command = feedback_command % remote_machine
-
-        # next : bind action and button
-        QtCore.QObject.connect(
-            self.do_button,
-            QtCore.SIGNAL('clicked()'),
-            self.do_command)
 
     def __init__(self, agent, command, label,
-                 feedback_command, feedback_line = None):
+                 feedback_command, feedback_line = None, dbg = None):
         ''' Init through an ssh agent instead of host and co
         passed by through the config file'''
         #first init inside
@@ -60,6 +35,7 @@ class HMI_action(HMI_line):
         self.layout.addWidget(self.do_button, 1, 2, 1, width*3)
         self.feedback_command = feedback_command % agent.host
         self.feedback_line = feedback_line
+        self.dbg = dbg
         # next : bind action and button
         QtCore.QObject.connect(
             self.do_button,
@@ -67,20 +43,17 @@ class HMI_action(HMI_line):
             self.do_command)
   
     def do_command(self):
-        # if (!self.agent):
-        #     self.agent = ssh_agent(self.remote_machine,
-        #                            self.user,
-        #                            self.password)
+        ''' Does the command as issued '''
         rtn = self.agent.action(self.command)
         if (self.feedback_line != None):
             self.feedback_line.setPlainText(QtCore.QString(rtn))
         else:
-            print rtn
+            if (self.dbg):
+                self.dbg.dprint("Feedback : %s" %rtn, 0)
 
     # Feedback : TBD (ssh / local ?)
     def feedback(self):
         pass
-
 
 if (__name__ == "__main__"):
     # unit test

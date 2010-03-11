@@ -74,57 +74,6 @@ class HMI_Machine(object):
         ''' Constructor :
         number of the machine (Id sent via signal)
         name of the interface'''
-        print "totoh"
-        self.dbg = dbg
-        self.number  = number
-        self.grid    = QtGui.QGridLayout()
-        self.widgets = {}
-        if (name == ""):
-            self.synthex = MyButton("  Machine %d" % (number), number)
-        else:
-            self.synthex = MyButton(name, number)
-        self.svc_values = {}
-        self.nada = []
-        self.synthetic_value = 0
-        self.widget = QtGui.QWidget()
-        self.feedback_line = QtGui.QTextEdit(self.widget)
-        self.timer = QtCore.QTimer(self.synthex.button)
-        QtCore.QObject.connect(
-            self.button,
-            QtCore.SIGNAL('clicked()'),
-            self.send)
-
-    def send(self):
-        ''' signal, made so as to send another signal (valued) '''
-        self.button.emit(QtCore.SIGNAL("ToggleMachineView(int)"), self.value)
-    
-    def change_level(self, level, scale = []):
-        ''' Relays the signal, and is to scale if necessary 
-        Substracts one for the first element is 0, not 1'''
-        def test_level(lev):
-            ''' Helper for filter'''
-            return (lev < level)
-
-        if len(scale) != 4:
-            if (level < 0 or 2 < level):
-                level = 3
-        else:
-            level = len(filter(test_level, scale))
-            if (2 < level):
-                level = 3
-        self.pix.changeColor(level)
-
-class HMI_Machine(object):
-    ''' Class to embark Widgets related to a single machine, making the
-    final outlook and code easy.
-    The HMI element shows machine # number, has a grid widget,
-    and a synthex, to be displayed on the general widget
-    '''
-    def __init__(self, number = 1, name = "", dbg = None):
-        ''' Constructor :
-        number of the machine (Id sent via signal)
-        name of the interface'''
-        print "totob"
         self.dbg = dbg
         self.number  = number
         self.grid    = QtGui.QGridLayout()
@@ -169,7 +118,8 @@ class HMI_Machine(object):
                                                 an_action["command"],
                                                 label,
                                                 "ping %s",
-                                                self.feedback_line)
+                                                self.feedback_line,
+                                                self.dbg)
             self.grid.addWidget(self.widgets[akey].wForm, i, 1, 1, 6)
             i += 1
             if (max_w < self.widgets[akey].width):
@@ -181,7 +131,8 @@ class HMI_Machine(object):
                                      a_supervision["name"])
             self.widgets[akey] = Hsu.HMI_supervision(a_machine.agent,
                                                      self.feedback_line,
-                                                     a_supervision)
+                                                     a_supervision,
+                                                     self.dbg)
             signal_str = self.widgets[akey].item["qsignal"] + "(int,str)"
             if (self.dbg):
                 self.dbg.dprint ("I support : %s" % signal_str, 2)
@@ -213,7 +164,7 @@ class HMI_Machine(object):
         # Close event overloaded
         self.widget.closeEvent = self.quit
         h_left = self.dictate.Form.height() - i * h_form
-        
+        self.dbg.dprint("h_left %d" % h_left, 1) 
         if (0 < h_left):
             wd=  QtGui.QWidget()
             wd.setMinimumSize(QtCore.QSize(2, h_left))

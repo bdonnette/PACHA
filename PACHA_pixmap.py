@@ -59,7 +59,6 @@ class p_pixmap(object):
                 self.num = 2
             else :
                 self.num = 3
-        print num, self.num, scale
         self.label.setPixmap(self.pixmaps[self.num])
         return self.num
 

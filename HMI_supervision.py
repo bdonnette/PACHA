@@ -39,7 +39,8 @@ class HMI_supervision(HMI_line):
     ''' This class defines an HMI element (on which a line is to be based)
     so as to define a generic supervision HMI element object
     to be derived into whatever element will have to be'''
-    def __init__(self, agent, feedback_line = None, supervised_item = {}):
+    def __init__(self, agent, feedback_line = None, supervised_item = {},
+                 dbg = None):
         ''' Adds the following to HMI_object class :
         - "Update" button
         '''
@@ -53,6 +54,7 @@ class HMI_supervision(HMI_line):
         self.layout.addWidget(self.update_bt, 1, 3)
         self.item = supervised_item
         self.supervision = Supervisor(self.item)
+        self.dbg = dbg
         QtCore.QObject.connect(self.update_bt,
                                QtCore.SIGNAL('clicked()'),
                                self.update,
@@ -62,12 +64,14 @@ class HMI_supervision(HMI_line):
         ''' Updates the value '''
         if self.item :
             accession = self.item["command"]
-            print accession
+            if (self.dbg):
+                self.dbg.dprint(accession, 0)
             ret = self.agent.action(accession)
             if (self.feedback_line != None):
                 self.feedback_line.setPlainText(QtCore.QString(ret))
             else:
-                print ret
+                if (self.dbg):
+                    self.dbg.dprint(ret, 0)
             field = self.item["field"]
             sep = self.item["sep"]
             if (field != 0) :
@@ -75,10 +79,13 @@ class HMI_supervision(HMI_line):
                     val = (ret.split(sep)[field]).strip("%")
                 else:
                     val = (ret.split()[field]).strip("%")
-                print val
+                if (self.dbg):
+                    self.dbg.dprint(val, 1)
             self.value = self.pix.changeColor(val, self.item["levels"])
             signal_str = self.item["qsignal"] + "(int,str)"
-            print "send : %s val %d" % (signal_str, self.value)
+            if (self.dbg):
+                self.dbg.dprint("send : %s val %d" % (signal_str, self.value),
+                                1)
             self.update_bt.emit(QtCore.SIGNAL(signal_str), 
                                 self.value, signal_str)
 
