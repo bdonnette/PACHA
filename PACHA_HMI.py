@@ -59,7 +59,8 @@ class Hmi_app(object):
         self.app = QtGui.QApplication(sys.argv)
         self.grid = QtGui.QGridLayout()
         self.main_widget = QtGui.QWidget()
-
+        # Close event overloaded
+        self.main_widget.closeEvent = self.quit_main
         # Config
         self.all_machines = []
         self.machine_viewed = 0
@@ -102,7 +103,6 @@ class Hmi_app(object):
             self.hgt = self.main_widget.height()
             self.height = self.main_widget.frameGeometry().height()
             for i in range(0, self.n_machines):
-
                 self.all_machines[i]["HMI"].move(
                     self.pos.x(), 
                     self.pos.y() + self.height + 24)
@@ -125,11 +125,17 @@ class Hmi_app(object):
 
         self.machine_viewed = machine_viewed
 
+    def quit_main(self, event):
+        ''' Overload the main QUIT event to make both quits effective'''
+        if (self.machine_viewed):
+            self.quit_bt()
+
     def quit_bt(self):
         ''' To overload the QUIT event so as to do the same as button
         re-press'''
         self.pos_w = self.all_machines[self.machine_viewed - 1]["HMI"].hide()
         self.machine_viewed = 0
+
 
 #HMI = Hmi_app(3)
 # to become :

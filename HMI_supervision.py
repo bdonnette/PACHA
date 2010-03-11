@@ -48,7 +48,8 @@ class HMI_supervision(HMI_line):
         HMI_line.__init__(self, agent.host, 0)
         self.feedback_line = feedback_line
         self.agent = agent
-        self.update_bt = QtGui.QPushButton("Actualiser")
+        svc_label = supervised_item["name"]
+        self.update_bt = QtGui.QPushButton(svc_label)
         self.layout.addWidget(self.update_bt, 1, 3)
         self.item = supervised_item
         self.supervision = Supervisor(self.item)

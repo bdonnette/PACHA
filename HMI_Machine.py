@@ -157,7 +157,8 @@ class HMI_Machine(object):
         for an_action in a_machine.actions:
             akey = "mach%s_cde%s" % (a_machine.hostname, 
                                      an_action["command"])
-            label = "Action : " + an_action["command"]
+            # label = "Action : " + an_action["command"]
+            label = an_action["name"]
             self.widgets[akey] = Hac.HMI_action(a_machine.agent,
                                                 an_action["command"],
                                                 label,
@@ -176,7 +177,7 @@ class HMI_Machine(object):
                                                      self.feedback_line,
                                                      a_supervision)
             signal_str = self.widgets[akey].item["qsignal"] + "(int,str)"
-            print "I support : %s" % signal_str
+            # print "I support : %s" % signal_str
             QtCore.QObject.connect(self.widgets[akey].update_bt,
                                    QtCore.SIGNAL(signal_str),
                                    self.update_val)
@@ -201,6 +202,7 @@ class HMI_Machine(object):
         self.grid.addWidget(self.dictate.Form, 1, pos_x, 20, 9)
         self.widget.setGeometry(0, 28, 910, 456)
         self.widget.setLayout(self.grid)
+        # Close event overloaded
         self.widget.closeEvent = self.quit
         h_left = self.dictate.Form.height() - i * 25
         if (0 < h_left):
