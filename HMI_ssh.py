@@ -19,11 +19,12 @@ class ssh_agent (object):
     secret key auth. '''
     def __init__(self,
                  host,
-                 user, password = ""):
+                 user, password = "", dbg = None):
         self.user = user
         self.password = password
         self.host = host
         self.is_win32 = (os.name == "nt")
+        self.dbg = dbg
 
     def action(self, command="df"):
         user = self.user
@@ -53,18 +54,25 @@ class ssh_agent (object):
             if (password != ""):
                 i = child.expect([pexpect.TIMEOUT, ssh_newkey, 'password: '])
                 if i == 0: # Timeout
-                    print 'ERROR!'
-                    print 'SSH could not login. Here is what SSH said:'
-                    print child.before, child.after
+                    if (self.dbg):
+                        self.dbg.dprint ('ERROR!',0)
+                        self.dbg.dprint (
+                            'SSH could not login. Here is what SSH said:', 0)
+                        self.dbg.dprint(
+                            "%s %s" (child.before, child.after), 0)
                     return None
                 if i == 1: # SSH does not have the public key. Just accept it.
                     child.sendline ('yes')
                     child.expect ('password: ')
                     i = child.expect([pexpect.TIMEOUT, 'password: '])
                     if i == 0: # Timeout
-                        print 'ERROR!'
-                        print 'SSH could not login. Here is what SSH said:'
-                        print child.before, child.after
+                        if (self.dbg):
+                            self.dbg.dprint ('ERROR!', 0)
+                            self.dbg.dprint (
+                                'SSH could not login. Here is what SSH said:'
+                                0)
+                            self.dbg.dprint(
+                                "%s %s", (child.before, child.after), 0)
                         return None       
                 child.sendline(password)
 
