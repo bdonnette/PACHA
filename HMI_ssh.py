@@ -66,7 +66,7 @@ class ssh_agent (object):
                         print 'SSH could not login. Here is what SSH said:'
                         print child.before, child.after
                         return None       
-                    child.sendline(password)
+                child.sendline(password)
 
             child.expect(pexpect.EOF)        
             self.stdout = child.before
