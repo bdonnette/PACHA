@@ -70,10 +70,12 @@ class HMI_Machine(object):
     The HMI element shows machine # number, has a grid widget,
     and a synthex, to be displayed on the general widget
     '''
-    def __init__(self, number = 1, name = ""):
+    def __init__(self, number = 1, name = "", dbg = None):
         ''' Constructor :
         number of the machine (Id sent via signal)
         name of the interface'''
+        print "totoh"
+        self.dbg = dbg
         self.number  = number
         self.grid    = QtGui.QGridLayout()
         self.widgets = {}
@@ -118,10 +120,12 @@ class HMI_Machine(object):
     The HMI element shows machine # number, has a grid widget,
     and a synthex, to be displayed on the general widget
     '''
-    def __init__(self, number = 1, name = ""):
+    def __init__(self, number = 1, name = "", dbg = None):
         ''' Constructor :
         number of the machine (Id sent via signal)
         name of the interface'''
+        print "totob"
+        self.dbg = dbg
         self.number  = number
         self.grid    = QtGui.QGridLayout()
         self.widgets = {}
@@ -144,7 +148,8 @@ class HMI_Machine(object):
         self.svc_values[signal_str] = level
         print self.svc_values
         max_val = max(self.svc_values.values())
-        print max_val
+        if (self.dbg):
+            self.dbg.dprint(max_val, 1)
         if (max_val != self.synthetic_value):
             self.synthetic_value = max_val
         self.synthex.change_level(max_val)
@@ -154,6 +159,7 @@ class HMI_Machine(object):
         # Actions
         i = 1
         max_w = 0
+        h_form = 0
         for an_action in a_machine.actions:
             akey = "mach%s_cde%s" % (a_machine.hostname, 
                                      an_action["command"])
@@ -177,7 +183,8 @@ class HMI_Machine(object):
                                                      self.feedback_line,
                                                      a_supervision)
             signal_str = self.widgets[akey].item["qsignal"] + "(int,str)"
-            # print "I support : %s" % signal_str
+            if (self.dbg):
+                self.dbg.dprint ("I support : %s" % signal_str, 2)
             QtCore.QObject.connect(self.widgets[akey].update_bt,
                                    QtCore.SIGNAL(signal_str),
                                    self.update_val)
@@ -193,6 +200,7 @@ class HMI_Machine(object):
                                                  a_service,
                                                  self.feedback_line)
             self.grid.addWidget(self.widgets[bkey].wForm, i, 1, 1, 6)
+            h_form = self.widgets[bkey].wForm.height()
             i += 1
             if (max_w < self.widgets[akey].width):
                 max_w = self.widgets[akey].width
@@ -204,7 +212,8 @@ class HMI_Machine(object):
         self.widget.setLayout(self.grid)
         # Close event overloaded
         self.widget.closeEvent = self.quit
-        h_left = self.dictate.Form.height() - i * 25
+        h_left = self.dictate.Form.height() - i * h_form
+        
         if (0 < h_left):
             wd=  QtGui.QWidget()
             wd.setMinimumSize(QtCore.QSize(2, h_left))
@@ -241,7 +250,7 @@ class HMI_Machine(object):
             self.timer.stop()
             self.timer.setSingleShot(False)
             self.timer_started = True
-            self.timer.start(8000)
+            self.timer.start(20000)
         for i in self.widgets.values():
             try:
                 i.update()

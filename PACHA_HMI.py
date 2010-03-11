@@ -20,18 +20,18 @@ from PyQt4 import QtCore, QtGui
 import HMI_Machine as HM
 import machine as M
 import ConfigParser
+import debug_print as dp
 
 class Hmi_app(object):
     ''' Main app class. Reads config via the machine object.
     '''
-    def __init__(self, n_machines = 2):
+    def __init__(self, n_machines = 2, debug = 0):
         ''' To become : config file '''
         # Global app init
         self.app = QtGui.QApplication(sys.argv)
-
         self.grid = QtGui.QGridLayout()
         self.main_widget = QtGui.QWidget()
-
+        self.dbg = dp.debug_print(debug)
         # Machines HMI elements
         self.all_machines = []
         self.machine_viewed = 0
@@ -52,7 +52,7 @@ class Hmi_app(object):
         self.has_shown = False
  
 # New
-    def __init__(self, config_file = "config.example.cfg"):
+    def __init__(self, config_file = "config.example.cfg", debug = 2):
         ''' App initialization throuh HMI usuals first
         Initialization of the HMI through config file then.'''
         # HMI initialization
@@ -62,6 +62,7 @@ class Hmi_app(object):
         # Close event overloaded
         self.main_widget.closeEvent = self.quit_main
         # Config
+        self.dbg = dp.debug_print(2)
         self.all_machines = []
         self.machine_viewed = 0
         config = ConfigParser.ConfigParser()
@@ -76,7 +77,7 @@ class Hmi_app(object):
                     ConfigParser.NoSectionError) :
                 break
             a_machine = M.Machine(config, label)
-            a_hmi_machine = HM.HMI_Machine(i, label)
+            a_hmi_machine = HM.HMI_Machine(i, label, self.dbg)
             a_hmi_machine.configure(a_machine)
             self.all_machines.append({"machine": a_machine,
                                       "HMI": a_hmi_machine})
@@ -139,7 +140,7 @@ class Hmi_app(object):
 
 #HMI = Hmi_app(3)
 # to become :
-HMI = Hmi_app(config_file = "config/example.cfg")
+HMI = Hmi_app(config_file = "config/example.cfg", debug = 2)
 HMI.show()
 sys.exit(HMI.app.exec_())
 
