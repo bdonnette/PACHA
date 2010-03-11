@@ -46,7 +46,8 @@ class MyButton(object):
 
     def send(self):
         ''' signal, made so as to send another signal (valued) '''
-        self.button.emit(QtCore.SIGNAL("ToggleMachineView(int)"), self.value)
+        self.button.emit(QtCore.SIGNAL("ToggleMachineView(int)"), 
+                         self.value)
     
     def change_level(self, level, scale = []):
         ''' Relays the signal, and is to scale if necessary 
