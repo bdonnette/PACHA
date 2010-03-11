@@ -96,7 +96,8 @@ class HMI_Machine(object):
 
     def update_val(self, level, signal_str):
         self.svc_values[signal_str] = level
-        print self.svc_values
+        if (self.dbg):
+            self.dbg.dprint(self.svc_values, 1)
         max_val = max(self.svc_values.values())
         if (self.dbg):
             self.dbg.dprint(max_val, 1)

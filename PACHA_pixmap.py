@@ -34,7 +34,6 @@ class p_pixmap(object):
                     "/graphics/" + name))
         self.label.setPixmap(self.pixmaps[3])
 
-
     def changeColor(self, level, scale = []):
         ''' Changes the color of the icon 
         3 : non reachable / arg problem

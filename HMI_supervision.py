@@ -84,8 +84,8 @@ class HMI_supervision(HMI_line):
             self.value = self.pix.changeColor(val, self.item["levels"])
             signal_str = self.item["qsignal"] + "(int,str)"
             if (self.dbg):
-                self.dbg.dprint("send : %s val %d" % (signal_str, self.value),
-                                1)
+                self.dbg.dprint(
+                    "send : %s val %d" % (signal_str, self.value), 1)
             self.update_bt.emit(QtCore.SIGNAL(signal_str), 
                                 self.value, signal_str)
 

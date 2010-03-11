@@ -24,33 +24,7 @@ import debug_print as dp
 
 class Hmi_app(object):
     ''' Main app class. Reads config via the machine object.
-    '''
-    def __init__(self, n_machines = 2, debug = 0):
-        ''' To become : config file '''
-        # Global app init
-        self.app = QtGui.QApplication(sys.argv)
-        self.grid = QtGui.QGridLayout()
-        self.main_widget = QtGui.QWidget()
-        self.dbg = dp.debug_print(debug)
-        # Machines HMI elements
-        self.all_machines = []
-        self.machine_viewed = 0
-        self.n_machines = n_machines
-        for i in range(0, n_machines):
-            # read config of machine...
-            self.all_machines.append(HM.HMI_Machine(i+1))
-            self.all_machines[i].config()
-            # Remainder : colored widget to be changed upon signal/slot
-            self.grid.addWidget(self.all_machines[i].synthex.Form,
-                                0, i, 1, 1)
-            QtCore.QObject.connect(self.all_machines[i].synthex.button,
-                                   QtCore.SIGNAL("ToggleMachineView(int)"),
-                                   self.toggle)
-
-        self.main_widget.setLayout(self.grid)
-        self.main_widget.setGeometry(0, 12, 640, 50)
-        self.has_shown = False
- 
+    ''' 
 # New
     def __init__(self, config_file = "config.example.cfg", debug = 2):
         ''' App initialization throuh HMI usuals first
@@ -62,7 +36,7 @@ class Hmi_app(object):
         # Close event overloaded
         self.main_widget.closeEvent = self.quit_main
         # Config
-        self.dbg = dp.debug_print(2)
+        self.dbg = dp.debug_print(debug)
         self.all_machines = []
         self.machine_viewed = 0
         config = ConfigParser.ConfigParser()
@@ -140,7 +114,7 @@ class Hmi_app(object):
 
 #HMI = Hmi_app(3)
 # to become :
-HMI = Hmi_app(config_file = "config/example.cfg", debug = 2)
+HMI = Hmi_app(config_file = "config/example.cfg", debug = 0)
 HMI.show()
 sys.exit(HMI.app.exec_())
 
