@@ -69,8 +69,7 @@ class ssh_agent (object):
                         if (self.dbg):
                             self.dbg.dprint ('ERROR!', 0)
                             self.dbg.dprint (
-                                'SSH could not login. Here is what SSH said:'
-                                0)
+                                'SSH could not login. Here is what SSH said:', 0)
                             self.dbg.dprint(
                                 "%s %s", (child.before, child.after), 0)
                         return None       
