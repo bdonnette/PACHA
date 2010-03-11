@@ -32,15 +32,15 @@ class ssh_agent (object):
 
         if (self.is_win32):
             if (password == ""):
-                full_cmd = "c:\Python26\plink.exe -l %s %s %s" % (
+                full_cmd = 'c:\Python26\plink.exe -batch -l %s %s %s' % (
                     user, host, command)
             else:
-                full_cmd = "c:\Python26\plink.exe -l %s -pw %s %s %s" % (
+                full_cmd = 'c:\Python26\plink.exe -batch -l %s -pw %s %s %s' % (
                     user, password, host, command)
             child = sp.Popen(full_cmd, shell = True, 
                              stdin = sp.PIPE, stdout=sp.PIPE, stderr=sp.PIPE)
             l = ""
-            if (child.wait == 0):
+            if (child.wait() == 0):
                 self.stdout = l.join(child.stdout.readlines()).strip('\n')
             else:
                 self.stdout = l.join(child.stderr.readlines()).strip('\n')
