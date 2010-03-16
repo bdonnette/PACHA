@@ -96,15 +96,20 @@ def get_value():
 
 def test():
     ''' Proceeds the unit test '''
+    import HMI_ssh as ssh
+
 #not finished yet
     def print_sig(lev, sig):
         print "Signal raised, sig %s, val = %d" % (sig, lev)
 
     app = QtGui.QApplication(sys.argv)
     svc_item = {"method":"local",
+                "name":"test",
                 "command":get_value,
                 "qsignal":"testing123"}
-    sup = HMI_supervision(svc_item, "localhost")
+    agent = ssh.ssh_agent("192.168.122.14", "root", "toto")
+    print agent
+    sup = HMI_supervision(agent, None, svc_item, None)
     w2 = QtGui.QWidget()
     QtCore.QObject.connect(sup.update_bt, 
                            QtCore.SIGNAL(svc_item["qsignal"]+"(int,str)"), 

@@ -36,11 +36,11 @@ class HMI_service(HMI_line):
         - echomode is set for testing (echoes the command only),
         False for true action
         '''
-        HMI_line.__init__(self, remote_machine, 0)
+        HMI_line.__init__(self, agent.host, 0)
         self.set_width(5)
 
-        self.remote_machine = agent.hostname
-        self.base = "/etc/rc.d/init.d/" + services[service["name"]]
+        self.remote_machine = agent.host
+        self.base = "/etc/rc.d/init.d/" + services[service]
         label_base = services[service]
         self.start_button = QtGui.QPushButton(service + " start")
         self.stop_button = QtGui.QPushButton(service + " stop")
@@ -92,9 +92,10 @@ class HMI_service(HMI_line):
         self.do_command("restart", self.echomode)
 
 if (__name__ == "__main__"):
+    import HMI_ssh as ssh
     # unit test
     app = QtGui.QApplication(sys.argv)
-    service = HMI_service("192.168.122.14",
-                          "ntp", True)
+    agent = ssh.ssh_agent("192.168.122.14", "root", "toto")
+    service = HMI_service(agent, "ntp", True)
     service.wForm.show()
     sys.exit(app.exec_())

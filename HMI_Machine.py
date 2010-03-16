@@ -79,14 +79,16 @@ class HMI_Machine(object):
         self.number  = number
         self.grid    = QtGui.QGridLayout()
         self.widgets = {}
+        self.widget = QtGui.QWidget()
         if (name == ""):
             self.synthex = MyButton("  Machine %d" % (number), number)
+            self.widget.setWindowTitle(QtCore.QString("Machine %d" % number))
         else:
             self.synthex = MyButton(name, number)
+            self.widget.setWindowTitle(QtCore.QString(name))
         self.svc_values = {}
         self.nada = []
         self.synthetic_value = 0
-        self.widget = QtGui.QWidget()
         self.feedback_line = QtGui.QTextEdit(self.widget)
         self.timer = QtCore.QTimer()
         self.timer_started = False

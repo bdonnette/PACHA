@@ -114,7 +114,7 @@ class Hmi_app(object):
 
 #HMI = Hmi_app(3)
 # to become :
-HMI = Hmi_app(config_file = "config/example.cfg", debug = 0)
+HMI = Hmi_app(config_file = "config/default.cfg", debug = 0)
 HMI.show()
 sys.exit(HMI.app.exec_())
 
