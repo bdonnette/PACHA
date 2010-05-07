@@ -7,6 +7,6 @@ It is designed to be easily extensible, and logs actions on the server. No
 unwanted connection is assumed possible hence a very basic rights management
 (ie "yes you can").
 
-First steps : client, ssh and SNMP connexions.
+First steps : client, ssh and SNMP connections.
 
 Initial conception tried pyssh, but it seems that pexpect is much better at doing the job.
