@@ -11,3 +11,6 @@ If running Linux:
 
 Setup one configuration file per machine that must be supervised on config/machines
 Issue "python Pacha.py"
+
+Whether using Linux or windows, you will have to generate the Ui_*.py files. To do so, just issue:
+	./auto ui
