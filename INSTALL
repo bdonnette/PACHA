@@ -1,0 +1,13 @@
+Pull files from git or extract from archive
+Install "python 2.7" and "PyQt4"
+If running Windows:
+	- Download plink.exe from the following URL to the file specified in conf/pacha.cfg (usually "C:\Python27\")
+		http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html
+		plink.exe is a ssh client used by Pacha on Windows to connect to remote machines.
+		plink.exe needs to know all machine's fingerprints (ie: first make a manual ssh connection to each machine)
+
+If running Linux:
+	- Install pexpect
+
+Setup one configuration file per machine that must be supervised on config/machines
+Issue "python Pacha.py"

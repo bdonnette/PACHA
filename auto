@@ -1,0 +1,24 @@
+#/bin/sh
+
+case "$1" in
+	clean)
+		echo "Cleaning *.pyc files"
+		rm -v *.pyc Ui_*.py
+	;;
+
+	ui)
+		echo "Building UI from ui files"
+		for uifile in *.ui;
+		do
+			rm ${uifile/.ui/.pyc} ${uifile/.ui/.py} > /dev/null 2>&1
+			echo "pyuic4 ${uifile} -o ${uifile/.ui/.py}"
+			pyuic4 ${uifile} -o ${uifile/.ui/.py}
+		done
+	;;
+
+	*)
+		echo "Unknown command"
+		exit 1
+	;;
+esac
+

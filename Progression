@@ -1,0 +1,64 @@
+2.2.1	Élément de supervision : surveillance de service
+X	Signal Vert/Rouge si un daemon ne tourne pas
+X	boutons start / restart
+
+2.2.2	Élément de supervision : surveillance d'un système
+X	Implémenter RG de l'icône de Machine
+		Cf p6 de spec fonctionnelle	
+
+2.2.3	Élément d'action : exécution d'une commande
+X	OK
+
+2.2.4	Élément d'action : démarrage/arrêt d'un service
+X	Cf 2.2.1?
+
+2.2.5	Élément de supervision : couple de système
+	Implémenter rg
+		mettre en place paramétrage de serveur actif/passif
+		mettre en place rg en fonction de cette qualité
+
+2.2.6	Interface graphique : Gérer les accès samba
+	à faire
+
+
+
+
+
+
+Remonter le timer de ActionsSupervisions vers Machine
+à échéance du timer de la machine
+toutes les query des valeurs des ActionsSupervisions etc sont faites séquenciellement, les valeurs retour sont stockées (dans Machine) puis l'état de la machine est calculé et stockée (dans Machine)
+
+
+répercutées sur le GUI, stockées puis l'état de la machine est calculé selon les rg puis répercuté sur le GUI
+
+
+
+
+Pacha
+	pour chaque Machine décrite dans la conf
+		instancie une Machine
+		instancie une ViewMachine en fonction de la machine (chaqueViewMachine tient un pointeur vers sa machine)
+		donne à la Machine, un pointeur vers sa viewMachine
+
+		lance le Thread Machine (while True) qui fait :
+			met à jour toutes ses valeurs
+			lance la mise à jour de la GUI
+			sleep
+
+
+TODO
+	revoir le format des données que retourne service.updateState
+	revoir la conf pour
+		faire charger dynamiquement pacha.cfg (n'importe quelle valeur écrite dans le fichier est directement chargée)
+	faire internationalisation
+	faire gestion de messages d'erreur par machine dans ty ou dans fichier de log ou dans un autre onglet?
+	utiliser des constantes
+		par exemple Machine.py:120
+	rajouter dans les éléments biz des mémoires des états précédents ; au moment de faire l'update de ces valeurs, les comparer à leurs n-1 et ne répercuter sur l'IHM que s'il y a eu changement
+	voir s'il est possible d'ouvrire une seule connexion ssh  avec la machine et la réutiliser (est-ce bien utile si ces co glandent pdt 10 minutes à ne rien faire?)
+	faire les requêtes ssh dans des threads pour ne pas bloquer le reste de l'appli
+
+Remarque :
+	les états des services ne rentrent pas en ligne de calcul pour l'état de la machine
+	supervision : si une supervision est orange et vitale elle ne rend pas sa machine orange !
