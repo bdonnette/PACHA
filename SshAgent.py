@@ -66,7 +66,6 @@ class SshAgent(object):
         stdout = ""
 
         str_password = 'password: '
-        str_newkey = 'Are you sure you want to continue connecting'
         str_connection_refused = 'ssh: connect to host %s port 22: Connection refused' % ip
         str_no_route_to_host = 'ssh: connect to host %s port 22: No route to host' % ip
 
@@ -76,15 +75,16 @@ class SshAgent(object):
                           pexpect.TIMEOUT,
                           str_connection_refused,
                           str_no_route_to_host,
-                          str_newkey
                           ])
 
         if (i == 0):
             child.sendline(password)
             child.expect(pexpect.EOF)
             stdout = child.before
-        elif (i == 1 or i == 2 or i == 3 or i == 4):
-            stdout = "%s %s\n%i" % (child.before, child.after, i)
+        elif (i == 1 or i == 2 or i == 3):
+            stdout = "%s %s\r\n%i" % (child.before, child.after, i)
+            print "---"
+            print stdout
 
         stdout = stdout.strip('\r\n')
 
@@ -112,7 +112,7 @@ class SshAgent(object):
 
         stdout, sep, exitStatus = result.rpartition('\n')
 
-        return (int(exitStatus), stdout.strip('\r'))
+        return (int(exitStatus), stdout.strip('\r\n'))
 
 
     def printTty(self):

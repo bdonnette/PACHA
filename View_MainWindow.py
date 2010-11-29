@@ -67,8 +67,9 @@ class View_MainWindow(Ui_MainWindow.Ui_MainWindow):
         # Show ToolBox of first machine
         self.treeWidget.expandAll()
         self.machineViews.values()[0].show()
+#        self.treeWidget.setItemSelected(self.treeWidget.itemAt(0, 0), True)
         self.showedViewMachine = self.machineViews.values()[0]
-        self.treeWidget.itemAt(0, 0).setSelected(True)
+#        self.treeWidget.itemAt(0, 0).setSelected(True)
 
     """
     """

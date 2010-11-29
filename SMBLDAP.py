@@ -21,42 +21,37 @@ class SMBLDAP(object):
     """
     """
     def userAdd(self, newUserName):
-        return self.machine.sshAgent.query(self.machine.hostname,
-                                           self.cmd_user_add % newUserName)
+        print self.cmd_user_add % newUserName
+        return self.machine.sshAgent.query(self.cmd_user_add % newUserName)
 
 
     """
     """
     def userDel(self, userNameToDel):
-        return self.machine.sshAgent.query(self.machine.hostname,
-                                           self.cmd_user_del % userNameToDel)
+        return self.machine.sshAgent.query(self.cmd_user_del % userNameToDel)
 
 
     """
     """
     def usersLs(self):
-        return self.machine.sshAgent.query(self.machine.hostname,
-                                           self.cmd_users_ls)
+        return self.machine.sshAgent.query(self.cmd_users_ls)
 
 
     """
     """
     def groupAdd(self, newGroupName):
-        return self.machine.sshAgent.query(self.machine.hostname,
-                                           self.cmd_group_add % newGroupName)
+        return self.machine.sshAgent.query(self.cmd_group_add % newGroupName)
 
 
     """
     """
     def groupDel(self, groupNameToDel):
-        return self.machine.sshAgent.query(self.machine.hostname,
-                                           self.cmd_group_del % groupNameToDel)
+        return self.machine.sshAgent.query(self.cmd_group_del % groupNameToDel)
 
     """
     """
     def groupsLs(self):
-        return self.machine.sshAgent.query(self.machine.hostname,
-                                           self.cmd_groups_ls)
+        return self.machine.sshAgent.query(self.cmd_groups_ls)
 
 
     """    Test function that displays this Machine in TTY

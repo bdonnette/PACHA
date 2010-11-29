@@ -183,10 +183,6 @@ class Machine(Thread):
 
         self.hb_state = hb_state 
 
-        print "---"
-        print self.ip
-        print self.hb_state
-
 
     """    Test function that displays this Machine in TTY
     """
