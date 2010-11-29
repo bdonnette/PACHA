@@ -59,7 +59,8 @@ class Pacha_config(object):
         self.STATE_UNKNOWN  = 3
 
         # Heartbeat
-        self.HB_UNKNOWN     = -1
+        self.HB_UNKNOWN     = "Unknown"
+        self.HB_ERROR       = "Error"
         # These are answers expected from HB
         self.HB_LOCAL       = "local"
         self.HB_FOREIGN     = "foreign"

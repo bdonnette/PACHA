@@ -171,11 +171,21 @@ class Machine(Thread):
 
         hb_state = self.conf.HB_UNKNOWN
 
-        # TODO Implement functional rule here once we have a full HB to test
-        if (not error):
-            hb_state = stdout
+        if (error):
+            hb_state = self.conf.HB_ERROR
+        else:
+            if (stdout in [self.conf.HB_LOCAL,
+                           self.conf.HB_FOREIGN,
+                           self.conf.HB_ALL,
+                           self.conf.HB_NONE,
+                           self.conf.HB_TRANSITION]):
+                hb_state = stdout
 
         self.hb_state = hb_state 
+
+        print "---"
+        print self.ip
+        print self.hb_state
 
 
     """    Test function that displays this Machine in TTY
