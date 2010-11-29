@@ -44,15 +44,17 @@ class SshAgent(object):
                          stdout = subprocess.PIPE,
                          stderr = subprocess.STDOUT)
 
-        if (child.wait() == 0):
-            stream = child.stdout
-        else:
-            stream = child.stderr
-
-        # Turns these lines into one str with line separators
         result = ""
-        for line in stream:
-            result += line
+        for line in child.stdout:
+                result += line
+
+        if (child.wait() != 0):
+            result += str(child.wait()) + "\r\n"
+
+        # If we didn't manage to reach the machine, add the error code to result
+        # so that following result handling don't fail
+#        if (child.wait() != 0):
+#            result += "%i\r\n" % child.wait()
 
         return result.strip('\r\n')
 
