@@ -41,7 +41,7 @@ class Machine(Thread):
         self.ip = machineConfPars.get("general", "ip", 0)
         self.group = myGroup
         self.is_master = (machineConfPars.get("general", "is_master", 0) == 'True')
-        self.hb_state = self.conf.STATE_UNKNOWN
+        self.hb_state = self.conf.HB_UNKNOWN
 
         self.sshAgent = SshAgent.SshAgent(self.conf, machineConfPars, self)
         self.state = self.conf.STATE_UNKNOWN
@@ -113,7 +113,7 @@ class Machine(Thread):
 
             one_vital_red = one_vital_red | ( (supervision.vital) & (supervision.state == self.conf.STATE_RED) )
 
-        state = self.conf.STATE_GREEN
+        state = self.conf.STATE_UNKNOWN
 
         if (all_green):
             state = self.conf.STATE_GREEN
@@ -169,22 +169,11 @@ class Machine(Thread):
     def update_hb_state(self):
         error, stdout = self.sshAgent.query(self.conf.val["general"]["hb_status_command"])
 
-# ---
-#cl_status rscstatus	"all"		node est master
-#			none		node est slave
-#			transition	
-#			blablabla	HB est en erreur
-# ---
-
         hb_state = self.conf.HB_UNKNOWN
 
         # TODO Implement functional rule here once we have a full HB to test
-        if (error):
-            hb_state = self.conf.HB_UNKNOWN
-        elif (stdout == '0'):
-            hb_state = self.conf.HB_UP
-        else:
-            hb_state = self.conf.HB_STRAIGHT
+        if (not error):
+            hb_state = stdout
 
         self.hb_state = hb_state 
 

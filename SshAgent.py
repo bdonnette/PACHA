@@ -31,7 +31,6 @@ class SshAgent(object):
     """
     def query_from_lame_win32(self, ip, user, password, command):
         import subprocess
-        stdout = ""
         if (password == ""):
             full_cmd = self.conf.val["general"]["ssh_win_cmd_no_pass"] % (
                 user, ip, command)
@@ -43,22 +42,19 @@ class SshAgent(object):
                          shell = True,
                          stdin = subprocess.PIPE,
                          stdout = subprocess.PIPE,
-                         stderr = subprocess.PIPE)
+                         stderr = subprocess.STDOUT)
 
-        l = ""
-        stdout = ""
-        exitStatus = 1
         if (child.wait() == 0):
-            result = l.join(child.stdout.readlines()).strip('\n')
-
-            # TODO put this in conf
-            # stdout can be surrounded by "\r\n" so remove them
-            # Remove exit status from answer and store it appart
-            stdout, sep, exitStatus = result.rpartition('\n')
+            stream = child.stdout
         else:
-            result = l.join(child.stderr.readlines()).strip('\n')
+            stream = child.stderr
 
-        return exitStatus, stdout
+        # Turns these lines into one str with line separators
+        result = ""
+        for line in stream:
+            result += line
+
+        return result.strip('\r\n')
 
     """
     """
@@ -67,48 +63,30 @@ class SshAgent(object):
 
         stdout = ""
 
+        str_password = 'password: '
         str_newkey = 'Are you sure you want to continue connecting'
         str_connection_refused = 'ssh: connect to host %s port 22: Connection refused' % ip
         str_no_route_to_host = 'ssh: connect to host %s port 22: No route to host' % ip
-        str_password = 'password: '
+
         child = pexpect.spawn(self.conf.val["general"]["ssh_lnx_cmd"] % (user, ip, command))
 
-        exitStatus = 1
-        end = False
-        i = 0
-        while (not end):
-            i = child.expect([pexpect.TIMEOUT,
-                              str_connection_refused,
-                              str_no_route_to_host,
-                              str_newkey,
-                              str_password])
+        i = child.expect([str_password,
+                          pexpect.TIMEOUT,
+                          str_connection_refused,
+                          str_no_route_to_host,
+                          str_newkey
+                          ])
 
-            if (i == 0):
-                stdout = "SSH could not login. Here is what SSH said: %s %s" % (child.before, child.after)
-                end = True
-            elif (i == 1):
-                stdout = "Connection refused: %s %s" % (child.before, child.after)
-                end = True
-            elif (i == 2):
-                stdout = "Unable to find host: %s %s" % (child.before, child.after)
-                end = True
-            elif (i == 3):
-                child.sendline('yes')
-            elif (i == 4):
-                child.sendline(password)
-                child.expect(pexpect.EOF)
-                stdout = child.before
-                end = True
+        if (i == 0):
+            child.sendline(password)
+            child.expect(pexpect.EOF)
+            stdout = child.before
+        elif (i == 1 or i == 2 or i == 3 or i == 4):
+            stdout = "%s %s\n%i" % (child.before, child.after, i)
 
         stdout = stdout.strip('\r\n')
 
-        if (i == 4):
-            # TODO put this in conf
-            # stdout can be surrounded by "\r\n" so remove them
-            # Remove exit status from answer and store it appart
-            stdout, sep, exitStatus = stdout.rpartition('\r\n')
-
-        return exitStatus, stdout
+        return stdout
 
     """
     """
@@ -117,21 +95,22 @@ class SshAgent(object):
         # TODO put this in conf?
         command += "; echo $?"
 
-        error = False
-        stdout = ""
+        result = ""
 
         if (os.name == "nt"):
-            error, stdout = self.query_from_lame_win32(self.machine.ip,
+            result = self.query_from_lame_win32(self.machine.ip,
                                                 self.user,
                                                 self.password,
                                                 command)
         else:
-            error, stdout = self.query_from_awesome_linux(self.machine.ip,
+            result = self.query_from_awesome_linux(self.machine.ip,
                                                    self.user,
                                                    self.password,
                                                    command)
 
-        return (int(error), stdout)
+        stdout, sep, exitStatus = result.rpartition('\n')
+
+        return (int(exitStatus), stdout.strip('\r'))
 
 
     def printTty(self):

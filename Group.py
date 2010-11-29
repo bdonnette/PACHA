@@ -29,24 +29,30 @@ class Group(object):
     """
     def updateState(self):
 
-        all_available       = True
-        all_hb_up           = True
-        all_mach_straight   = True
-
+        hb_ok = True
+        one_in_transition = False
 
         for machine in self.machines:
-            all_available     = all_available & (machine.hb_state != self.conf.HB_UNKNOWN)
-            all_hb_up         = all_hb_up & (machine.hb_state == self.conf.HB_UP)
-            all_mach_straight = all_mach_straight & (machine.hb_state == self.conf.HB_STRAIGHT)
+            if (machine.is_master):
+                hb_ok = hb_ok & (machine.hb_state == self.conf.HB_ALL)
+            else:
+                hb_ok = hb_ok & (machine.hb_state == self.conf.HB_NONE)
 
-        state = self.conf.STATE_UNKNOWN
+            one_in_transition = one_in_transition | (machine.hb_state == self.conf.HB_TRANSITION)
 
-        if (all_available & all_hb_up & all_mach_straight):
+        # Default: all cases are RED
+        state = self.conf.STATE_RED
+
+        # GREEN if master is "all" and all slaves are "none"
+        if (hb_ok):
             state = self.conf.STATE_GREEN
-        elif (all_available & all_hb_up & (not all_mach_straight)):
+        else:
+            # If previous statement is not true: YELLOW
             state = self.conf.STATE_YELLOW
-        elif (not all_available | (not all_hb_up)):
-            state = self.conf.STATE_RED
+
+        # If one machine is in transition then YELLOW
+        if (one_in_transition):
+            state = self.conf.STATE_YELLOW
             
         self.state = state
 

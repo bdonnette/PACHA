@@ -59,12 +59,13 @@ class Pacha_config(object):
         self.STATE_UNKNOWN  = 3
 
         # Heartbeat
-        # HB daemon is up and running
-        self.HB_UP          = 0
-        # Machine has its initial role (no master/slave switch has happened)
-        self.HB_STRAIGHT    = 1
-        # Can't connect to machine
-        self.HB_UNKNOWN     = 2
+        self.HB_UNKNOWN     = -1
+        # These are answers expected from HB
+        self.HB_LOCAL       = "local"
+        self.HB_FOREIGN     = "foreign"
+        self.HB_ALL         = "all"
+        self.HB_NONE        = "none"
+        self.HB_TRANSITION  = "transition"
 
 
 # vim:ts=4:sw=4:softtabstop=4:smarttab:expandtab

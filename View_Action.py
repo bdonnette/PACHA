@@ -12,6 +12,7 @@
 #
 
 from PyQt4 import QtCore, QtGui
+import os
 
 """
 """
@@ -40,7 +41,7 @@ class View_Action(object):
         if (error):
             QtGui.QMessageBox.critical(self.pushButton,
     			                          'Erreur',
-                                          "La commande s'est terminee en erreur : %s" % stdout)
+                                          "La commande s'est terminee avec l'erreur %i : %s%s" % (error, os.linesep, stdout))
             
 
 # vim:ts=4:sw=4:softtabstop=4:smarttab:expandtab
