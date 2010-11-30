@@ -36,12 +36,11 @@ class View_Action(object):
 
     def issue_action(self):
         error, stdout = self.action.issue()
-
-        self.viewActionsSupervisions.displayResult(stdout)
+        self.viewActionsSupervisions.displayResult(os.linesep.join(stdout))
         if (error):
             QtGui.QMessageBox.critical(self.pushButton,
     			                          'Erreur',
-                                          "La commande s'est terminee avec l'erreur %i : %s%s" % (error, os.linesep, stdout))
+                                          "La commande s'est terminee avec l'erreur %i : %s%s" % (error, os.linesep, os.linesep.join(stdout)))
             
 
 # vim:ts=4:sw=4:softtabstop=4:smarttab:expandtab

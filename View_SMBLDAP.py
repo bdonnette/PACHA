@@ -12,6 +12,7 @@
 #
 
 from PyQt4 import QtCore, QtGui
+import os
 import Ui_SMBLDAP, View_SMBLDAP_dialog
 
 """
@@ -68,7 +69,7 @@ class View_SMBLDAP(Ui_SMBLDAP.Ui_SMBLDAP):
                 # TODO Handle internationalization
                 QtGui.QMessageBox.critical(self.widgetSMBLDAP,
     			                          'Erreur',
-                                          "La machine %s a retourne l'erreur suivante : %s" % (self.machine.hostname, cmd_res))
+                                          "La machine '%s' a retourne l'erreur suivante :%s" % (self.machine.hostname, os.linesep + os.linesep.join(cmd_res)))
             else:
                 QtGui.QMessageBox.information(self.widgetSMBLDAP,
     			                          'Information',
@@ -94,7 +95,7 @@ class View_SMBLDAP(Ui_SMBLDAP.Ui_SMBLDAP):
             if (error):
                 QtGui.QMessageBox.critical(self.widgetSMBLDAP,
                                            'Erreur',
-                                           "La machine %s a retourne l'erreur suivante : %s" % (self.machine.hostname, cmd_res))
+                                           "La machine '%s' a retourne l'erreur suivante :%s" % (self.machine.hostname, os.linesep + os.linesep.join(cmd_res)))
             else:
                 QtGui.QMessageBox.information(self.widgetSMBLDAP,
         		                              'Information',
@@ -110,12 +111,12 @@ class View_SMBLDAP(Ui_SMBLDAP.Ui_SMBLDAP):
         if (error):
             QtGui.QMessageBox.critical(self.widgetSMBLDAP,
 			                          'Erreur',
-                                      "La machine %s a retourne l'erreur suivante : %s" % (self.machine.hostname, cmd_res))
+                                      "La machine %s a retourne l'erreur suivante : %s" % (self.machine.hostname, os.linesep + os.linesep.join(cmd_res)))
         else:
             # TODO put \r in conf
             self.listUsers.clear()
-            for stri in cmd_res.split('\r\n'):
-                self.listUsers.addItem(stri)
+            for stri in cmd_res:
+                self.listUsers.addItem(QtCore.QString(stri))
 
 
     """
@@ -132,7 +133,7 @@ class View_SMBLDAP(Ui_SMBLDAP.Ui_SMBLDAP):
             if (error):
                 QtGui.QMessageBox.critical(self.widgetSMBLDAP,
     			                          'Erreur',
-                                          "La machine %s a retourne l'erreur suivante : %s" % (self.machine.hostname, cmd_res))
+                                          "La machine %s a retourne l'erreur suivante : %s" % (self.machine.hostname, os.linesep + os.linesep.join(cmd_res)))
             else:
                 QtGui.QMessageBox.information(self.widgetSMBLDAP,
     			                          'Information',
@@ -158,7 +159,7 @@ class View_SMBLDAP(Ui_SMBLDAP.Ui_SMBLDAP):
             if (error):
                 QtGui.QMessageBox.critical(self.widgetSMBLDAP,
                                            'Erreur',
-                                           "La machine %s a retourne l'erreur suivante : %s" % (self.machine.hostname, cmd_res))
+                                           "La machine %s a retourne l'erreur suivante : %s" % (self.machine.hostname, os.linesep + os.linesep.join(cmd_res)))
             else:
                 QtGui.QMessageBox.information(self.widgetSMBLDAP,
                                               'Information',
@@ -174,11 +175,11 @@ class View_SMBLDAP(Ui_SMBLDAP.Ui_SMBLDAP):
         if (error):
             QtGui.QMessageBox.critical(self.widgetSMBLDAP,
 			                          'Attention',
-                                      "La machine %s a retourne l'erreur suivante : %s" % (self.machine.hostname, cmd_res))
+                                      "La machine %s a retourne l'erreur suivante : %s" % (self.machine.hostname, os.linesep + os.linesep.join(cmd_res)))
         else:
             self.listGroups.clear()
             # TODO put \r in conf
-            for stri in cmd_res.split('\r\n'):
+            for stri in cmd_res:
                 self.listGroups.addItem(stri)
 
 # vim:ts=4:sw=4:softtabstop=4:smarttab:expandtab

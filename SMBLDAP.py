@@ -67,18 +67,17 @@ class SMBLDAP(object):
         result = ""
 
         error, all_groups = self.groupsLs()
+
         if (not error):
-            list_all_groups = all_groups.split('\r\n')
+            error, groups_of_user = self.getGroupsOfUser(userName)
 
-            error, groups_of_user = self.machine.sshAgent.query(self.cmd_ls_groups_of_user % (self.userConf.get("smbldap", "groups_searchbase"), userName))
             if (not error):
-                list_groups_of_user = groups_of_user.split('\r\n')
-
-                for group in list_groups_of_user:
+                for group in groups_of_user:
+#                    print "[%s]" % group
                     if (group != ''):
-                        list_all_groups.remove(group)
+                        all_groups.remove(group)
 
-                result = list_all_groups
+                result = all_groups
 
             else:
                 result = groups_of_user
@@ -92,14 +91,12 @@ class SMBLDAP(object):
     """
     """
     def add_user_to_group(self, user, group):
-        print self.cmd_add_user_to_group % (user, group)
         return self.machine.sshAgent.query(self.cmd_add_user_to_group % (user, group))
 
 
     """
     """
     def remove_user_from_group(self, user, group):
-        print self.cmd_remove_user_from_group % (user, group)
         return self.machine.sshAgent.query(self.cmd_remove_user_from_group % (user, group))
 
 

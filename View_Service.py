@@ -12,6 +12,7 @@
 #
 
 from PyQt4 import QtCore, QtGui
+import os
 import Ui_Service
 
 """
@@ -48,7 +49,7 @@ class View_Service(Ui_Service.Ui_Service):
         else:
             message = "La commande de demarrage a ete executee"
             if (stdout != ""):
-                message += "\r\net a retourne le message suivant :\r\n" + stdout
+                message += os.linesep + "et a retourne le message suivant :" + os.linesep + os.linesep.join(stdout)
 
             QtGui.QMessageBox.information(self.widgetService,
     			                          'Information',
@@ -62,11 +63,11 @@ class View_Service(Ui_Service.Ui_Service):
         if (error):
             QtGui.QMessageBox.critical(self.widgetService,
     			                          'Error',
-                                          "La machine a retourne le message suivant : %s" % stdout)
+                                          "La machine a retourne le message suivant : %s" % os.linesep.join(stdout))
         else:
             message = "La commande de redemarrage a ete executee"
             if (stdout != ""):
-                message += "\r\n et a retourne le message suivant :\r\n" + stdout
+                message += os.linesep + "et a retourne le message suivant :" + os.linesep + os.linesep.join(stdout)
 
             QtGui.QMessageBox.information(self.widgetService,
     			                          'Information',

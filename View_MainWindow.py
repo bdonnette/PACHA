@@ -67,9 +67,8 @@ class View_MainWindow(Ui_MainWindow.Ui_MainWindow):
         # Show ToolBox of first machine
         self.treeWidget.expandAll()
         self.machineViews.values()[0].show()
-#        self.treeWidget.setItemSelected(self.treeWidget.itemAt(0, 0), True)
         self.showedViewMachine = self.machineViews.values()[0]
-#        self.treeWidget.itemAt(0, 0).setSelected(True)
+
 
     """
     """
@@ -94,6 +93,7 @@ class View_MainWindow(Ui_MainWindow.Ui_MainWindow):
     """
     """
     def quit_main(self, event):
+        #TODO add an quit event and display a nice message dialog while bluring this window
         print "Please wait while all agents exit..."
         self.pachaApp.quit_main()
 

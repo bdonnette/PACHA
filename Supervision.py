@@ -70,10 +70,10 @@ class Supervision(object):
             if (self.field != self.conf.STATE_GREEN) :
                 if (self.sep):
                     # TODO handle exit status
-                    val = int((stdout.split(self.sep)[self.field]).strip("%"))
+                    val = int((stdout[0].split(self.sep)[self.field]).strip("%"))
                 else:
                     # TODO handle exit status
-                    val = int((stdout.split()[self.field]).strip("%"))
+                    val = int((stdout[0].split()[self.field]).strip("%"))
 
             level = self.conf.STATE_YELLOW
             levels = self.levels

@@ -1,4 +1,4 @@
-# encoding : utf-8
+﻿# encoding : utf-8
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -31,9 +31,14 @@ class SshAgent(object):
     """
     def query_from_lame_win32(self, ip, user, password, command):
         import subprocess
+
+        exitLines = []
+
+        # Add the exit status of the command asked by user
+        # TODO put this in conf?
+        command += "; echo $?"
+
         if (password == ""):
-            #TODO set this value as an attribute at loading
-            # If crashes because of spaces in command: add db-quotes around %s on pacha.cfg
             full_cmd = self.conf.val["general"]["ssh_win_cmd_no_pass"] % (
                 user, ip, command)
         else:
@@ -41,61 +46,69 @@ class SshAgent(object):
                 user, password, ip, command)
 
         child = subprocess.Popen(full_cmd,
-                         shell = True,
-                         stdin = subprocess.PIPE,
-                         stdout = subprocess.PIPE,
-                         stderr = subprocess.STDOUT)
+                        shell = True,
+                        stdin = subprocess.PIPE,
+                        stdout = subprocess.PIPE,
+                        stderr = subprocess.STDOUT)
 
-        result = ""
+        exitStatus = child.wait()
+
         for line in child.stdout:
-                result += line
+                exitLines.append(line.strip('\r\n'))
 
-        # If we didn't manage to reach the machine, add the error code to result
-        # so that following result handling don't fail
-        if (child.wait() != 0):
-            result += str(child.wait()) + "\r\n"
+        # If command returned OK
+        if (exitStatus == 0):
+            exitStatus = int(exitLines.pop())
 
-        return result.strip('\r\n')
+        # return (exitStatus, (line_1, line_2, ..., line_n))
+        return (exitStatus, exitLines)
+
 
     """
     """
     def query_from_awesome_linux(self, ip, user, password, command):
         import pexpect
 
-        stdout = ""
+        exitStatus = 0
+        exitLines = []
+
+        # Add the exit status of the command asked by user
+        # TODO put this in conf?
+        command += "; echo $?"
 
         str_password = 'password: '
         str_connection_refused = 'ssh: connect to host %s port 22: Connection refused' % ip
         str_no_route_to_host = 'ssh: connect to host %s port 22: No route to host' % ip
 
-        #TODO set this value as an attribute at loading
         child = pexpect.spawn(self.conf.val["general"]["ssh_lnx_cmd"] % (user, ip, command))
 
-        i = child.expect([str_password,
-                          pexpect.TIMEOUT,
-                          str_connection_refused,
-                          str_no_route_to_host,
-                          ])
+        exitStatus = child.expect([str_password,
+                                  pexpect.TIMEOUT,
+                                  str_connection_refused,
+                                  str_no_route_to_host,
+                                  ])
 
-        if (i == 0):
+        # If command returned OK
+        if (exitStatus == 0):
             child.sendline(password)
             child.expect(pexpect.EOF)
-            stdout = child.before
-        elif (i == 1 or i == 2 or i == 3):
-            stdout = "%s %s\r\n%i" % (child.before, child.after, i)
+            stdout = child.before.strip('\r\n')
 
-        stdout = stdout.strip('\r\n')
+            exitLines.extend(stdout.splitlines())
 
-        return stdout
+            exitStatus = int(exitLines.pop())
+
+        # If there was an issue
+        else:
+            exitLines.extend(child.before + child.after)
+
+        # return (exitStatus, (line_1, line_2, ..., line_n))
+        return (exitStatus, exitLines)
 
 
     """
     """
     def query(self, command):
-        # Add the exit status of the command asked by user
-        # TODO put this in conf?
-        command += "; echo $?"
-
         result = ""
 
         if (os.name == "nt"):
@@ -109,9 +122,10 @@ class SshAgent(object):
                                                    self.password,
                                                    command)
 
-        stdout, sep, exitStatus = result.rpartition('\n')
+#        stdout, sep, exitStatus = result.rpartition('\n')
 
-        return (int(exitStatus), stdout.strip('\r\n'))
+ #       return (int(exitStatus), stdout.strip('\r\n'))
+        return result
 
 
     def printTty(self):

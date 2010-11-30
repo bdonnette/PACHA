@@ -40,7 +40,7 @@ class View_SMBLDAP_dialog(Ui_SMBLDAP_dialog.Ui_SMBLDAP_dialog):
         QtCore.QObject.connect(self.btnAddUserToGroup, QtCore.SIGNAL("clicked()"), self.add_user_to_group)
         QtCore.QObject.connect(self.btnRemoveUserFromGroup, QtCore.SIGNAL("clicked()"), self.remove_user_from_group)
 
-        self.refreshGroupsLists()
+#        self.refreshGroupsLists()
 
 
     """
@@ -56,23 +56,23 @@ class View_SMBLDAP_dialog(Ui_SMBLDAP_dialog.Ui_SMBLDAP_dialog):
 
         if (error):
             QtGui.QMessageBox.critical(self.widget,
-			                          'Erreur',
-                                      "La machine %s a retourne l'erreur suivante :\n%s" % (self.machine.hostname, error))
+                                      'Erreur',
+                                      "La machine '%s' a retourne l'erreur suivante :%s" % (self.machine.hostname, os.linesep + os.linesep.join(error)))
         else:
             error, groups_available_for_user = self.machine.smbldap.getGroupsAvailableForUser(self.displayedUser)
             if (error):
                 QtGui.QMessageBox.critical(self.widget,
-    			                          'Erreur',
-                                          "La machine %s a retourne l'erreur suivante :\n%s" % (self.machine.hostname, error))
+                                          'Erreur',
+                                          "La machine '%s' a retourne l'erreur suivante :%s" % (self.machine.hostname, os.linesep + os.linesep.join(error)))
             else:
                 # TODO put \r in conf
                 self.listGroupsOfUser.clear()
-                for stri in groups_of_user.split('\r\n'):
-                    self.listGroupsOfUser.addItem(stri)
+                for stri in groups_of_user:
+                    self.listGroupsOfUser.addItem(QtCore.QString(stri))
 
                 self.listGroupsAvailable.clear()
                 for stri in groups_available_for_user:
-                    self.listGroupsAvailable.addItem(stri)
+                    self.listGroupsAvailable.addItem(QtCore.QString(stri))
 
 
     """
@@ -92,7 +92,7 @@ class View_SMBLDAP_dialog(Ui_SMBLDAP_dialog.Ui_SMBLDAP_dialog):
             if (error):
                 QtGui.QMessageBox.critical(self.widget,
                                            'Erreur',
-                                           "La machine %s a retourne l'erreur suivante :\n%s" % (self.machine.hostname, cmd_res))
+                                           "La machine '%s' a retourne l'erreur suivante :%s" % (self.machine.hostname, os.linesep + os.linesep.join(cmd_res)))
             else:
                 QtGui.QMessageBox.information(self.widget,
                                               'Information',
@@ -118,7 +118,7 @@ class View_SMBLDAP_dialog(Ui_SMBLDAP_dialog.Ui_SMBLDAP_dialog):
             if (error):
                 QtGui.QMessageBox.critical(self.widget,
                                            'Erreur',
-                                           "La machine %s a retourne l'erreur suivante :\n%s" % (self.machine.hostname, cmd_res))
+                                           "La machine %s a retourne l'erreur suivante :%s" % (self.machine.hostname, os.linesep + os.linesep.join(cmd_res)))
             else:
                 QtGui.QMessageBox.information(self.widget,
                                               'Information',
