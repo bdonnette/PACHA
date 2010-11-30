@@ -32,6 +32,8 @@ class SshAgent(object):
     def query_from_lame_win32(self, ip, user, password, command):
         import subprocess
         if (password == ""):
+            #TODO set this value as an attribute at loading
+            # If crashes because of spaces in command: add db-quotes around %s on pacha.cfg
             full_cmd = self.conf.val["general"]["ssh_win_cmd_no_pass"] % (
                 user, ip, command)
         else:
@@ -48,13 +50,10 @@ class SshAgent(object):
         for line in child.stdout:
                 result += line
 
-        if (child.wait() != 0):
-            result += str(child.wait()) + "\r\n"
-
         # If we didn't manage to reach the machine, add the error code to result
         # so that following result handling don't fail
-#        if (child.wait() != 0):
-#            result += "%i\r\n" % child.wait()
+        if (child.wait() != 0):
+            result += str(child.wait()) + "\r\n"
 
         return result.strip('\r\n')
 
@@ -69,6 +68,7 @@ class SshAgent(object):
         str_connection_refused = 'ssh: connect to host %s port 22: Connection refused' % ip
         str_no_route_to_host = 'ssh: connect to host %s port 22: No route to host' % ip
 
+        #TODO set this value as an attribute at loading
         child = pexpect.spawn(self.conf.val["general"]["ssh_lnx_cmd"] % (user, ip, command))
 
         i = child.expect([str_password,
@@ -83,12 +83,11 @@ class SshAgent(object):
             stdout = child.before
         elif (i == 1 or i == 2 or i == 3):
             stdout = "%s %s\r\n%i" % (child.before, child.after, i)
-            print "---"
-            print stdout
 
         stdout = stdout.strip('\r\n')
 
         return stdout
+
 
     """
     """

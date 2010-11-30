@@ -12,7 +12,7 @@
 #
 
 from PyQt4 import QtCore, QtGui
-import Ui_SMBLDAP
+import Ui_SMBLDAP, View_SMBLDAP_dialog
 
 """
 """
@@ -38,6 +38,19 @@ class View_SMBLDAP(Ui_SMBLDAP.Ui_SMBLDAP):
         QtCore.QObject.connect(self.btnGroupAdd, QtCore.SIGNAL("clicked()"), self.addGroup)
         QtCore.QObject.connect(self.btnGroupDel, QtCore.SIGNAL("clicked()"), self.delGroup)
         QtCore.QObject.connect(self.btnGroupsRefresh, QtCore.SIGNAL("clicked()"), self.refreshGroupsList)
+
+        QtCore.QObject.connect(self.listUsers, QtCore.SIGNAL("itemDoubleClicked(QListWidgetItem*)"), self.show_dialog)
+
+        # Populate SMBLDAP lists
+        self.refreshUsersList()
+        self.refreshGroupsList()
+
+
+    """
+    """
+    def show_dialog(self, item):
+        self.SMBLDAP_dialog = View_SMBLDAP_dialog.View_SMBLDAP_dialog(self.conf, self.machine)
+        self.SMBLDAP_dialog.show(item.text())
 
 
     """
@@ -68,24 +81,26 @@ class View_SMBLDAP(Ui_SMBLDAP.Ui_SMBLDAP):
     """
     """
     def delUser(self):
+        userNameToDel = ""
         if (len(self.listUsers.selectedItems()) != 0):
             userNameToDel = self.listUsers.selectedItems()[0].text()
-            if (userNameToDel == ""):
-                QtGui.QMessageBox.warning(self.widgetSMBLDAP,
-    			                          'Attention',
-                                          "Merci de selectionner dans la liste l'utilisateur a supprimer")
-            else:
-                error, cmd_res = self.machine.smbldap.userDel(userNameToDel)
-                if (error):
-                    QtGui.QMessageBox.critical(self.widgetSMBLDAP,
-        			                          'Erreur',
-                                              "La machine %s a retourne l'erreur suivante : %s" % (self.machine.hostname, cmd_res))
-                else:
-                    QtGui.QMessageBox.information(self.widgetSMBLDAP,
-        			                          'Information',
-                                              "Utilisateur '%s' supprime" % newUserName)
 
-                    self.refreshUsersList()
+        if (userNameToDel == ""):
+            QtGui.QMessageBox.warning(self.widgetSMBLDAP,
+                                      'Attention',
+                                      "Merci de selectionner l'utilisateur a supprimer dans la liste.")
+        else:
+            error, cmd_res = self.machine.smbldap.userDel(userNameToDel)
+            if (error):
+                QtGui.QMessageBox.critical(self.widgetSMBLDAP,
+                                           'Erreur',
+                                           "La machine %s a retourne l'erreur suivante : %s" % (self.machine.hostname, cmd_res))
+            else:
+                QtGui.QMessageBox.information(self.widgetSMBLDAP,
+        		                              'Information',
+                                              "Utilisateur '%s' supprime" % userNameToDel)
+
+            self.refreshUsersList()
 
 
     """
@@ -98,6 +113,7 @@ class View_SMBLDAP(Ui_SMBLDAP.Ui_SMBLDAP):
                                       "La machine %s a retourne l'erreur suivante : %s" % (self.machine.hostname, cmd_res))
         else:
             # TODO put \r in conf
+            self.listUsers.clear()
             for stri in cmd_res.split('\r\n'):
                 self.listUsers.addItem(stri)
 
@@ -123,30 +139,32 @@ class View_SMBLDAP(Ui_SMBLDAP.Ui_SMBLDAP):
                                           "Groupe '%s' ajoute" % newGroupName)
 
                 self.editGroup.clear()
-                self.refreshGroupList()
+                self.refreshGroupsList()
 
 
     """
     """
     def delGroup(self):
+        groupNameToDel = ""
         if (len(self.listGroups.selectedItems()) != 0):
             groupNameToDel = self.listGroups.selectedItems()[0].text()
-            if (groupNameToDel == ""):
-                QtGui.QMessageBox.warning(self.widgetSMBLDAP,
-    			                          'Attention',
-                                          "Merci de selectionner dans la liste le groupe a supprimer")
-            else:
-                error, cmd_res = self.machine.smbldap.groupDel(groupNameToDel)
-                if (error):
-                    QtGui.QMessageBox.critical(self.widgetSMBLDAP,
-        			                          'Erreur',
-                                              "La machine %s a retourne l'erreur suivante : %s" % (self.machine.hostname, cmd_res))
-                else:
-                    QtGui.QMessageBox.information(self.widgetSMBLDAP,
-        			                          'Information',
-                                              "Groupe '%s' supprime" % newUserName)
 
-                    self.refreshGroupsList()
+        if (groupNameToDel == ""):
+            QtGui.QMessageBox.warning(self.widgetSMBLDAP,
+                                      'Attention',
+                                      "Merci de selectionner le groupe a supprimer dans la liste.")
+        else:
+            error, cmd_res = self.machine.smbldap.groupDel(groupNameToDel)
+            if (error):
+                QtGui.QMessageBox.critical(self.widgetSMBLDAP,
+                                           'Erreur',
+                                           "La machine %s a retourne l'erreur suivante : %s" % (self.machine.hostname, cmd_res))
+            else:
+                QtGui.QMessageBox.information(self.widgetSMBLDAP,
+                                              'Information',
+                                              "Groupe '%s' supprime" % groupNameToDel)
+
+            self.refreshGroupsList()
 
 
     """
@@ -158,6 +176,7 @@ class View_SMBLDAP(Ui_SMBLDAP.Ui_SMBLDAP):
 			                          'Attention',
                                       "La machine %s a retourne l'erreur suivante : %s" % (self.machine.hostname, cmd_res))
         else:
+            self.listGroups.clear()
             # TODO put \r in conf
             for stri in cmd_res.split('\r\n'):
                 self.listGroups.addItem(stri)

@@ -43,8 +43,9 @@ class Pacha_config(object):
             "cmd_group_add"         : conf_parser.get(key_smbldap, "cmd_group_add"),
             "cmd_group_del"         : conf_parser.get(key_smbldap, "cmd_group_del"),
             "cmd_groups_ls"         : conf_parser.get(key_smbldap, "cmd_groups_ls"),
-            "cmd_user_to_group"     : conf_parser.get(key_smbldap, "cmd_user_to_group"),
-            "cmd_user_off_group"    : conf_parser.get(key_smbldap, "cmd_user_off_group")
+            "cmd_ls_groups_of_user" : conf_parser.get(key_smbldap, "cmd_ls_groups_of_user"),
+            "cmd_add_user_to_group"     : conf_parser.get(key_smbldap, "cmd_add_user_to_group"),
+            "cmd_remove_user_from_group"    : conf_parser.get(key_smbldap, "cmd_remove_user_from_group")
         }
 
         self.val = {key_general     : values_general,
