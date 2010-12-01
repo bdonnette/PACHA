@@ -1,13 +1,45 @@
-Pull files from git or extract from archive
-Install "python 2.7" and "PyQt4"
-If running Windows:
-	- Download plink.exe from the following URL to the file specified in conf/pacha.cfg (usually "C:\Python27\")
-		http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html
-		plink.exe is a ssh client used by Pacha on Windows to connect to remote machines.
-		plink.exe needs to know all machine's fingerprints (ie: first make a manual ssh connection to each machine)
+Pacha works under both Linux and windows. It uses Python and PyQt for it GUI ; several generic ptyhon modules and a SSH client to connect to servers.
 
-If running Linux:
-	- Install pexpect
+To install Pacha :
+    - Check-out sources (or untar if provided with a tarball)
+        git clone git://github.com/bdonnette/PACHA.git
 
-Setup one configuration file per machine that must be supervised on config/machines
-Issue "python Pacha.py"
+    - Install pre-requisites depending on the OS Pacha will run ron (See next paragraphs).
+
+    - Write one configuration file per remote server to administer and place them on directory config/machines. Have a look at the one given as examples: options speak for themselves.
+
+    - Launch Pacha with command
+        python Pacha.py
+
+Pre-requisites for Pacha under Linux
+    These commands are Debian and must be adapted if used under an other OS
+
+    - Install a SSH client :
+        apt-get install openssh-client
+
+    - Install Python (2.6 or 2.7), PyQt 4 and Python module "pexpect":
+        apt-get install python python-qt4 python-pexpect
+
+    - As Pacha is not yet able to automatically accept adding the server footprint in the SSH database, you will have to make the first connection by hand for every sever. So for all server that you will want to administer through Pacha, please issue:
+        ssh <LOGIN>@<IP>
+
+        Then accept to add the key in database and then type the password. Don't forget to issue this command for all servers.
+
+
+Pre-requisites for Pacha under windows
+    - Download Python and PyQt for windows. you will find them here:
+        http://www.python.org/ftp/python/2.7.1/python-2.7.1.msi
+        http://www.riverbankcomputing.co.uk/static/Downloads/PyQt4/PyQt-Py2.7-gpl-4.8.1-1.exe
+
+    - Install these two on the default directory (C:\Python27) and add this to the PATH
+
+    - Download "plink.exe" available at the following URL and copy it on C:\Python27 (It is a SSH client for windows that Pacha will use to connect to servers)
+        http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html
+
+    - As Pacha is not yet able to automatically accept adding the server footprint in the SSH database, you will have to make the first connection by hand for every sever. So for all server that you will want to administer through Pacha, please issue:
+        C:\Python27\plink.exe -l <LOGIN> <IP>
+
+        Then answer "y" when asked if you want to add the server's fingerprint to the SSH DB and type the password. Don't forget to issue this command for all servers.
+
+    - If servers are configured to provide "GSSAPI authentication", "plink.exe" will write an extra line on stdout when connecting, saying "Access denied". To avoid such failure, please ensure that your servers have this "GSSAPI Authentication" disabled in /etc/ssh_sshd.conf :
+        GSSAPIAuthentication no

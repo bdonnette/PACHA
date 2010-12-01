@@ -124,13 +124,6 @@ class Machine(Thread):
 
         self.state = state
 
-#        print "___"
-#        print "%s / %s" % (self.hostname, supervision.label)
-#        print "all_green\t: %s" % all_green
-#        print "one_red\t: %s" % one_red
-#        print "one_vital_red\t: %s" % one_vital_red
-#        print "all_vital_green\t: %s" % all_vital_green
-
 
     """
     """

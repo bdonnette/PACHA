@@ -50,6 +50,12 @@ class View_MainWindow(Ui_MainWindow.Ui_MainWindow):
                 # Add an item on the treeWidget
                 treeItem = QtGui.QTreeWidgetItem(self.groupViews[machine.group.name].treeItem)
                 treeItem.setText(0, machine.hostname)
+
+                if (machine.is_master):
+                    font = QtGui.QFont()
+                    font.setBold(True)
+                    treeItem.setFont(0, font)
+                
     
                 # Create the View_Machine
                 view_Machine = View_Machine.View_Machine(self.conf, machine, self, treeItem)
