@@ -14,31 +14,11 @@
 
 import ConfigParser
 
-""" 
+""" Business object thet represents a Service (linux daemon) as specified by user in conf
 """
 class Service(object):
 
-    ""
-    ""
-    def __init__(self, conf, machineConfPars, index, machine):
-        self.machine = machine
-        self.conf = conf
-
-        key = "service"
-        section = key + "s"
-        option = key + "%i" % index
-        try :
-            self.label = machineConfPars.get(section, option + "_label", 0)
-            self.command = machineConfPars.get(section, option + "_command", 0)
-            self.status_command = machineConfPars.get(section, option + "_status_command", 0)
-            self.status = self.conf.STATE_UNKNOWN
-        except (ConfigParser.NoOptionError,
-                ConfigParser.NoSectionError) :
-            print "--ERROR Parsing config file--"
-            pass
-
-
-    """
+    """ Poll remote machine to update local Service state then update GUI
     """
     def updateState(self):
         error, stdout = self.machine.sshAgent.query(self.status_command)
@@ -52,18 +32,44 @@ class Service(object):
                 self.status = self.conf.STATE_GREEN
 
 
-    """
+    """ Send remote server the start command for this daemon
+            return  : (exitStatus, [stdoutLine ...])
     """
     def start(self):
         return self.machine.sshAgent.query(self.command + " start")
 
-    """
+    """ Send remote server the restart command for this daemon
+            return  : (exitStatus, [stdoutLine ...])
     """
     def restart(self):
         return self.machine.sshAgent.query(self.command + " restart")
 
 
+    """ Init method
+            conf        : Pacha global config
+            userConf    : machine specific configuration
+            index       : index of Service in the list of Services in conf file
+            machine     : machine that owns this Service
     """
+    def __init__(self, conf, userConf, index, machine):
+        self.machine = machine
+        self.conf = conf
+
+        key = "service"
+        section = key + "s"
+        option = key + "%i" % index
+        try :
+            self.label = userConf.get(section, option + "_label", 0)
+            self.command = userConf.get(section, option + "_command", 0)
+            self.status_command = userConf.get(section, option + "_status_command", 0)
+            self.status = self.conf.STATE_UNKNOWN
+        except (ConfigParser.NoOptionError,
+                ConfigParser.NoSectionError) :
+            print "--ERROR Parsing config file--"
+            pass
+
+
+    """ Displays this instance in TTY
     """
     def printTty(self):
         print "| |"

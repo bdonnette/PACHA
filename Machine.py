@@ -17,86 +17,19 @@ import SshAgent, Supervision, Action, Service, SMBLDAP
 from PyQt4 import QtCore, QtGui
 
 
-""" Represents a Machine as specified by user in conf
+""" Business object thet represents a Machine as specified by user in conf
+        A machine is a thread that polls its corresponding server every n seconds
+        and then launches the update process for visual display
 """
 class Machine(Thread):
-
-    """ ###################################################
-            Init
-    """
-
-    """ Init
-            conf             : Pacha general config dictionary
-            machineConfPars  : where to read user configuration
-            label            : identifier of the machine (the hostname)
-    """
-    def __init__(self, conf, machineConfPars, myGroup):
-        Thread.__init__(self)
-        self.running = False
-
-        self.conf = conf
-
-        # General connection
-        self.hostname = machineConfPars.get("general", "hostname", 0)
-        self.ip = machineConfPars.get("general", "ip", 0)
-        self.group = myGroup
-        self.is_master = (machineConfPars.get("general", "is_master", 0) == 'True')
-        self.hb_state = self.conf.HB_UNKNOWN
-
-        self.sshAgent = SshAgent.SshAgent(self.conf, machineConfPars, self)
-        self.state = self.conf.STATE_UNKNOWN
-
-        # Load user configuration
-        self.load_actions(machineConfPars)
-        self.load_supervisions(machineConfPars)
-        self.load_services(machineConfPars)
-
-        self.smbldap = None
-        if (machineConfPars.has_section("smbldap")):
-            self.smbldap = SMBLDAP.SMBLDAP(self.conf, machineConfPars, self)
-
-
-    """ Loads Actions from user config file
-    """
-    def load_actions(self, machineConfPars):
-        self.actions = []
-        key = "action"
-        i = 1
-        option = key + "%i_%s"
-        while (machineConfPars.has_option(key + "s", option % (i, "label"))):
-            self.actions.append(Action.Action(self.conf, machineConfPars, i, self))
-            i += 1
-
-
-    """ Loads Supervisions from user config file
-    """
-    def load_supervisions(self, machineConfPars):
-        self.supervisions = []
-        key = "supervision"
-        i = 1
-        option = key + "%i_%s"
-        while (machineConfPars.has_option(key + "s", option % (i, "label"))):
-            self.supervisions.append(Supervision.Supervision(self.conf, machineConfPars, i, self))
-            i += 1
-
-
-    """ Loads Services from user config file
-    """
-    def load_services(self, machineConfPars):
-        self.services = []
-        key = "service"
-        i = 1
-        option = key + "%i_%s"
-        while (machineConfPars.has_option(key + "s", option % (i, "label"))):
-            self.services.append(Service.Service(self.conf, machineConfPars, i, self))
-            i += 1
 
 
     """ ###################################################
             Thread
     """
 
-    """
+    """ Update local Machine state depending on Supervisions' states
+            Doesn't ask for Supervisions to update their states
     """
     def updateMachineState(self):
         state = 0
@@ -125,7 +58,7 @@ class Machine(Thread):
         self.state = state
 
 
-    """
+    """ Launch the Machine's thread that iterates through the update process
     """
     def run(self):
         self.running = True
@@ -149,16 +82,18 @@ class Machine(Thread):
             time.sleep(int(self.conf.val["general"]["ui_refresh_interval"]))
 
 
-    """
+    """ Stops the thread
     """
     def exit(self):
         self.running = False
 
 
     """ ###################################################
-            Methods
+            Business methods
     """
 
+    """ Poll server to update heartbeat stte and reflect changes to GUI
+    """
     def update_hb_state(self):
         error, stdout = self.sshAgent.query(self.conf.val["general"]["hb_status_command"])
 
@@ -177,7 +112,81 @@ class Machine(Thread):
         self.hb_state = hb_state 
 
 
-    """    Test function that displays this Machine in TTY
+    """ ###################################################
+            Init & Al.
+    """
+
+    """ Loads Actions from user config file
+            userConf    : machine specific configuration
+    """
+    def load_actions(self, userConf):
+        self.actions = []
+        key = "action"
+        i = 1
+        option = key + "%i_%s"
+        while (userConf.has_option(key + "s", option % (i, "label"))):
+            self.actions.append(Action.Action(self.conf, userConf, i, self))
+            i += 1
+
+
+    """ Loads Supervisions from user config file
+            userConf    : machine specific configuration
+    """
+    def load_supervisions(self, userConf):
+        self.supervisions = []
+        key = "supervision"
+        i = 1
+        option = key + "%i_%s"
+        while (userConf.has_option(key + "s", option % (i, "label"))):
+            self.supervisions.append(Supervision.Supervision(self.conf, userConf, i, self))
+            i += 1
+
+
+    """ Loads Services from user config file
+            userConf    : machine specific configuration
+    """
+    def load_services(self, userConf):
+        self.services = []
+        key = "service"
+        i = 1
+        option = key + "%i_%s"
+        while (userConf.has_option(key + "s", option % (i, "label"))):
+            self.services.append(Service.Service(self.conf, userConf, i, self))
+            i += 1
+
+
+    """ Init
+            conf        : Pacha global config
+            userConf    : machine specific configuration
+            myGroup     : Group to which this machine belongs
+    """
+    def __init__(self, conf, userConf, myGroup):
+        Thread.__init__(self)
+        self.running = False
+
+        self.conf = conf
+
+        # General connection
+        self.hostname = userConf.get("general", "hostname", 0)
+        self.ip = userConf.get("general", "ip", 0)
+        self.group = myGroup
+        self.is_master = (userConf.get("general", "is_master", 0) == 'True')
+        self.hb_state = self.conf.HB_UNKNOWN
+
+        self.sshAgent = SshAgent.SshAgent(self.conf, userConf, self)
+        self.state = self.conf.STATE_UNKNOWN
+
+        # Load user configuration
+        self.load_actions(userConf)
+        self.load_supervisions(userConf)
+        self.load_services(userConf)
+
+        self.smbldap = None
+        if (userConf.has_section("smbldap")):
+            self.smbldap = SMBLDAP.SMBLDAP(self.conf, userConf, self)
+
+
+    """ Displays this instance in TTY
     """
     def printTty(self):
         print "|"

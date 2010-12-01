@@ -25,7 +25,8 @@ class Group(object):
         self.machines = []
 
 
-    """
+    """ Update local Group state depending on Machines' states
+            Doesn't ask for Machines to update their states
     """
     def updateState(self):
 
@@ -65,7 +66,7 @@ class Group(object):
         self.state = state
 
 
-    """
+    """ Displays this instance in TTY
     """
     def printTty(self):
         print "|"

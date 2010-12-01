@@ -14,53 +14,69 @@
 import ConfigParser
 
 
-""" Represents the SMB/LDAP part of a Machine as specified by user in conf
+""" Business object thet represents the SMB/LDAP part of a Machine as specified by user in conf
 """
 class SMBLDAP(object):
 
-    """
+    """ Ask remote server to create new user
+            newUserName : the memberUid of new user to create
+            return      : (exitStatus, [stdoutLine ...])
     """
     def userAdd(self, newUserName):
         return self.machine.sshAgent.query(self.cmd_user_add % newUserName)
 
 
-    """
+    """ Ask remote server to delete an user
+            userNameToDel : the memberUid of user to delete
+            return        : (exitStatus, [stdoutLine ...])
     """
     def userDel(self, userNameToDel):
         return self.machine.sshAgent.query(self.cmd_user_del % userNameToDel)
 
 
-    """
+    """ Ask remote server to list all users
+            return  : (exitStatus, [stdoutLine ...])
     """
     def usersLs(self):
         return self.machine.sshAgent.query(self.cmd_users_ls)
 
 
-    """
+    """ Ask remote server to create new group
+            newGroupName    : the group Uid of new group to create
+            return          : (exitStatus, [stdoutLine ...])
     """
     def groupAdd(self, newGroupName):
         return self.machine.sshAgent.query(self.cmd_group_add % newGroupName)
 
 
-    """
+    """ Ask remote server to delete a group
+            groupNameToDel  : the groupUid of group to delete
+            return          : (exitStatus, [stdoutLine ...])
     """
     def groupDel(self, groupNameToDel):
         return self.machine.sshAgent.query(self.cmd_group_del % groupNameToDel)
 
 
-    """
+    """ Ask remote server to list all groups
+            return  : (exitStatus, [stdoutLine ...])
     """
     def groupsLs(self):
         return self.machine.sshAgent.query(self.cmd_groups_ls)
 
 
-    """
+    """ Ask remote server to list all groups of a specified user
+            userName    : the memberUid of the user
+            return      : (exitStatus, [stdoutLine ...])
     """
     def getGroupsOfUser(self, userName):
         return self.machine.sshAgent.query(self.cmd_ls_groups_of_user % (self.userConf.get("smbldap", "groups_searchbase"), userName))
 
 
-    """
+    """ Return the list of all groups a specified user can be added to.
+            Retreived through {groupsLs \ getGroupsOfUser}
+
+            userName    : the memberUid of the user
+            return      : (exitStatus, [stdoutLine ...])
     """
     def getGroupsAvailableForUser(self, userName):
 
@@ -73,7 +89,6 @@ class SMBLDAP(object):
 
             if (not error):
                 for group in groups_of_user:
-#                    print "[%s]" % group
                     if (group != ''):
                         all_groups.remove(group)
 
@@ -88,19 +103,25 @@ class SMBLDAP(object):
         return (error, result)
 
 
-    """
+    """ Ask remote server to add a user to a grou
+            user    : the UID of the user
+            group   : the UID of the group
+            return  : (exitStatus, [stdoutLine ...])
     """
     def add_user_to_group(self, user, group):
         return self.machine.sshAgent.query(self.cmd_add_user_to_group % (user, group))
 
 
-    """
+    """ Ask remote server to remove a user from a group
+            user    : the UID of the user
+            group   : the UID of the group
+            return  : (exitStatus, [stdoutLine ...])
     """
     def remove_user_from_group(self, user, group):
         return self.machine.sshAgent.query(self.cmd_remove_user_from_group % (user, group))
 
 
-    """    Test function that displays this Machine in TTY
+    """ Displays this instance in TTY
     """
     def printTty(self):
         print "| |"
@@ -117,7 +138,11 @@ class SMBLDAP(object):
         print "| | |-cmd_remove_user_from_group\t: %s" % self.cmd_remove_user_from_group
 
 
-    """ Constructor
+    """ Init method
+            conf        : Pacha global config
+            userConf    : machine specific configuration
+            index       : index of Service in the list of Services in conf file
+            machine     : machine that owns this Service
     """
     def __init__(self, conf, userConf, machine):
         self.conf = conf

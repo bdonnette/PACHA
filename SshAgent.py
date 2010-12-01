@@ -14,20 +14,18 @@
 import os, time
 import thread
 
-"""
+""" SSH client connector
+        Gives abstraction for Linux/windows SSH clients
 """
 class SshAgent(object):
 
-    """
-    """
-    def __init__(self, conf, machineConfPars, machine):
-        self.conf = conf
-        self.machine = machine
-        self.user = machineConfPars.get("sshagent", "user", 0)
-        self.password = machineConfPars.get("sshagent", "password", 0)
 
-
-    """
+    """ Query remote server if local OS is windows
+            ip          : IP of the remote server
+            user        : login name
+            password    : password
+            command     : command to issue on remote server
+            return      : (exitStatus, [stdoutLine ...])
     """
     def query_from_lame_win32(self, ip, user, password, command):
         import subprocess
@@ -64,7 +62,12 @@ class SshAgent(object):
         return (exitStatus, exitLines)
 
 
-    """
+    """ Query remote server if local OS is Linux
+            ip          : IP of the remote server
+            user        : login name
+            password    : password
+            command     : command to issue on remote server
+            return      : (exitStatus, [stdoutLine ...])
     """
     def query_from_awesome_linux(self, ip, user, password, command):
         import pexpect
@@ -106,7 +109,11 @@ class SshAgent(object):
         return (exitStatus, exitLines)
 
 
-    """
+    """ Issue command to the remote server
+            No need to specify remote server, this object knows which machine it belongs to
+
+            command     : command to issue on remote server
+            return      : (exitStatus, [stdoutLine ...])
     """
     def query(self, command):
         result = ""
@@ -122,12 +129,23 @@ class SshAgent(object):
                                                    self.password,
                                                    command)
 
-#        stdout, sep, exitStatus = result.rpartition('\n')
-
- #       return (int(exitStatus), stdout.strip('\r\n'))
         return result
 
 
+    """ Init method
+            conf        : Pacha global config
+            userConf    : machine specific configuration
+            machine     : machine that owns this Service
+    """
+    def __init__(self, conf, userConf, machine):
+        self.conf = conf
+        self.machine = machine
+        self.user = userConf.get("sshagent", "user", 0)
+        self.password = userConf.get("sshagent", "password", 0)
+
+
+    """ Displays this instance in TTY
+    """
     def printTty(self):
         print "| |"
         print "| |\\"

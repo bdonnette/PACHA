@@ -14,13 +14,24 @@
 
 import ConfigParser
 
-""" 
+""" Business Object for Pacha Actions
 """
 class Action(object):
 
-    ""
-    ""
-    def __init__(self, conf, machineConfPars, index, machine):
+    """ Send action to the server
+            return  : [exitStatus, [stdoutLine ...]]
+    """
+    def issue(self):
+        return self.machine.sshAgent.query(self.command)
+
+
+    """ Init function
+            conf        : global Pacha configuration
+            userConf    : machine specific configuration
+            index       : index of action in the list of actions in conf file
+            machine     : machine that owns this action
+    """
+    def __init__(self, conf, userConf, index, machine):
         self.conf = conf
         self.machine = machine
 
@@ -28,19 +39,15 @@ class Action(object):
         section = key + "s"
         option = key + "%i" % index
         try :
-            self.label = machineConfPars.get(section, option + "_label", 0)
-            self.command = machineConfPars.get(section, option + "_command", 0)
+            self.label = userConf.get(section, option + "_label", 0)
+            self.command = userConf.get(section, option + "_command", 0)
         except (ConfigParser.NoOptionError,
                 ConfigParser.NoSectionError) :
             print "--ERROR Parsing config file--"
             pass
 
-    """
-    """
-    def issue(self):
-        return self.machine.sshAgent.query(self.command)
 
-    """
+    """ Displays this instance in TTY
     """
     def printTty(self):
         print "| |"

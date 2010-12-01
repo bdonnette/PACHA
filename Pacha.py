@@ -17,12 +17,14 @@ import gettext, ConfigParser, os
 import Pacha_config, Group, Machine
 import View_MainWindow
 
+""" Main class (and start point) for application Pacha
+"""
 class Pacha(object):
 
 
-    """ Instantiate Machines as specified in user config file
-            config  : a ConfigParser bound to the user config file
-            return  : a couple (list of Machines, list of groups of machines hostnames)
+    """ Instantiate business objects as described in machines config files
+            machineDir  : directory on which to look for config files
+            return      : a list of groups (with their machines etc) instanciated regarding the config files
     """
     def init_biz(self, machineDir):
 
@@ -45,9 +47,8 @@ class Pacha(object):
         return groups.values()
 
 
-    """ Instanciate and initialize the GUI
-            machines    : list of Machines
-            groups      : list af machine hostnames
+    """ Instanciate and initialize the GUI objects
+            groups      : list af groups
     """
     def initGUI(self, groups):
         # The application
@@ -70,7 +71,7 @@ class Pacha(object):
         return (app, view_mainWindow)
 
 
-	"""
+	""" Asks all machine to kill their threads before exiting
 	"""
     def quit_main(self):
         for group in self.groups:
@@ -78,7 +79,7 @@ class Pacha(object):
                 machine.exit()
 
 
-	"""
+	""" Application init method
 	"""
     def __init__(self, sys):
 #        _ = gettext.gettext
@@ -86,23 +87,22 @@ class Pacha(object):
         # Load general tech configuration
         configParser = ConfigParser.ConfigParser()
         configParser.read("config/pacha.cfg")
-#        self.pachaConfig = self.load_general_conf(configParser)
         self.conf = Pacha_config.Pacha_config(configParser)
 
         # Instantiate Machines based on conf
         self.groups = self.init_biz("config/machines")
 
-#        for group in self.groups:
-#            group.printTty()
-
         # Initialize GUI
         self.app, self.view = self.initGUI(self.groups)
 
+        # Starts machine threads
     	for group in self.groups:
         	for machine in group.machines:
         		machine.start()
 
 
+""" Main entry point of Pacha
+"""
 if __name__ == "__main__":
     import sys
     pacha = Pacha(sys)

@@ -14,52 +14,11 @@
 
 import ConfigParser
 
-""" 
+""" Business Object for Pacha Supervisions
 """
 class Supervision(object):
 
-    ""
-    ""
-    def __init__(self, conf, userConfig, index, machine):
-        self.conf = conf
-        self.machine = machine
-
-        key = "supervision"
-        section = key + "s"
-        option = key + "%i" % index
-        try :
-            self.label = userConfig.get(section, option + "_label", 0)
-            self.vital = (userConfig.get(section, option + "_vital", 0) == "True")
-            self.param = userConfig.get(section, option + "_param", 0)
-            self.method = userConfig.get(section, option + "_method", 0)
-            self.state = self.conf.STATE_UNKNOWN
-
-            if (self.method == "ssh"):
-                self.command = userConfig.get(section, option + "_command", 0)
-                if (userConfig.has_option(section, option + "_field")):
-                    self.field = int(userConfig.get(section, option + "_field", 0)) - 1
-                else:
-                    self.field = self.conf.STATE_UNKNOWN
-
-                if (userConfig.has_option(section, option + "_sep")):
-                    self.sep = userConfig.get(section, option + "_sep", 0)
-                else:
-                    self.sep = ""
-
-            self.levels = [
-                int(userConfig.get(section, option + "_low_green")),
-                int(userConfig.get(section, option + "_low_orange")),
-                int(userConfig.get(section, option + "_low_red")),
-                int(userConfig.get(section, option + "_low_undef"))
-            ]
-
-        except (ConfigParser.NoOptionError,
-                ConfigParser.NoSectionError) :
-            print "--ERROR Parsing config file--"
-            pass
-
-
-    """
+    """ poll remote server tu update Supervision's state and update GUI
     """
     def updateState(self):
         error, stdout = self.machine.sshAgent.query(self.command)
@@ -84,7 +43,52 @@ class Supervision(object):
             self.state = level
 
 
+    """ Init method
+            conf        : global Pacha configuration
+            userConf    : machine specific configuration
+            index       : index of action in the list of actions in conf file
+            machine     : machine that owns this action
     """
+    def __init__(self, conf, userConf, index, machine):
+        self.conf = conf
+        self.machine = machine
+
+        key = "supervision"
+        section = key + "s"
+        option = key + "%i" % index
+        try :
+            self.label = userConf.get(section, option + "_label", 0)
+            self.vital = (userConf.get(section, option + "_vital", 0) == "True")
+            self.param = userConf.get(section, option + "_param", 0)
+            self.method = userConf.get(section, option + "_method", 0)
+            self.state = self.conf.STATE_UNKNOWN
+
+            if (self.method == "ssh"):
+                self.command = userConf.get(section, option + "_command", 0)
+                if (userConf.has_option(section, option + "_field")):
+                    self.field = int(userConf.get(section, option + "_field", 0)) - 1
+                else:
+                    self.field = self.conf.STATE_UNKNOWN
+
+                if (userConf.has_option(section, option + "_sep")):
+                    self.sep = userConf.get(section, option + "_sep", 0)
+                else:
+                    self.sep = ""
+
+            self.levels = [
+                int(userConf.get(section, option + "_low_green")),
+                int(userConf.get(section, option + "_low_orange")),
+                int(userConf.get(section, option + "_low_red")),
+                int(userConf.get(section, option + "_low_undef"))
+            ]
+
+        except (ConfigParser.NoOptionError,
+                ConfigParser.NoSectionError) :
+            print "--ERROR Parsing config file--"
+            pass
+
+
+    """ Displays this instance in TTY
     """
     def printTty(self):
         print "| |"
