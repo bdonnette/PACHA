@@ -15,29 +15,12 @@ from PyQt4 import QtCore, QtGui
 import os
 import Ui_Service
 
-"""
+""" GUI for Pacha's Service
 """
 class View_Service(Ui_Service.Ui_Service):
 
-    """
-    """
-    def __init__(self, conf, service):
-        self.conf = conf
-        self.service = service
-        self.widgetService = QtGui.QWidget()
-        self.setupUi(self.widgetService)
-        self.setupView()
 
-
-    """
-    """
-    def setupView(self):
-        self.labelText.setText(self.service.label)
-        QtCore.QObject.connect(self.startButton, QtCore.SIGNAL("clicked()"), self.issue_start)
-        QtCore.QObject.connect(self.restartButton, QtCore.SIGNAL("clicked()"), self.issue_restart)
-
-
-    """
+    """ Ask business object to start the remote daemon
     """
     def issue_start(self):
         error, stdout = self.service.start()
@@ -55,7 +38,8 @@ class View_Service(Ui_Service.Ui_Service):
     			                          'Information',
                                           message)
 
-    """
+
+    """ Ask business object to restart the remote daemon
     """
     def issue_restart(self):
         error, stdout = self.service.restart()
@@ -73,8 +57,30 @@ class View_Service(Ui_Service.Ui_Service):
     			                          'Information',
                                           message)
 
+
+    """ Update GUI regarding internal Service's state
+    """
     def reflectState(self):
         self.buttonIcon.setIcon(self.conf.val["general"]["icon_levels"][self.service.status])
 
+
+    """ Initial method to set dynamic elements up
+    """
+    def setupView(self):
+        self.labelText.setText(self.service.label)
+        QtCore.QObject.connect(self.startButton, QtCore.SIGNAL("clicked()"), self.issue_start)
+        QtCore.QObject.connect(self.restartButton, QtCore.SIGNAL("clicked()"), self.issue_restart)
+
+
+    """ Init method
+            conf            : Pacha global conf
+            service         : internal business object this view is bound to
+    """
+    def __init__(self, conf, service):
+        self.conf = conf
+        self.service = service
+        self.widgetService = QtGui.QWidget()
+        self.setupUi(self.widgetService)
+        self.setupView()
 
 # vim:ts=4:sw=4:softtabstop=4:smarttab:expandtab

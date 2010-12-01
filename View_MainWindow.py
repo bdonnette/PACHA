@@ -14,25 +14,41 @@
 from PyQt4 import QtCore, QtGui
 import Ui_MainWindow, View_Group, View_Machine, View_ActionsSupervisions, View_SMBLDAP
 
-"""
+""" GUI for Pacha's main window
 """
 class View_MainWindow(Ui_MainWindow.Ui_MainWindow):
 
+
+    """ Called when user clicked on a new item on the Server Tree
     """
+    def treeWidgetItemSelChanged(self):
+        # This TreeWidget allows only one item to be selected at a time
+        # So the first item is the only one on the list
+        selectedLabel = str(self.treeWidget.selectedItems()[0].text(0))
+
+        # If user has selected a machine
+        if (selectedLabel in self.machineViews.keys()):
+            self.showedViewMachine.hide()
+            self.machineViews[selectedLabel].show()
+            self.showedViewMachine = self.machineViews[selectedLabel]
+
+
+    """ Show this window
     """
-    def __init__(self, pachaApp, conf, groups):
-        self.pachaApp = pachaApp
-        self.conf = conf
-        self.groups = groups
-
-        self.widgetMainWindow = QtGui.QMainWindow()
-        self.setupUi(self.widgetMainWindow)
-        self.setupView()
-
-        self.widgetMainWindow.closeEvent = self.quit_main
+    def show(self):
+        self.widgetMainWindow.show()
 
 
+    """ Quit the application but first tell business objects we are stopping
+            eveent  : the quit event
     """
+    def quit_main(self, event):
+        #TODO add an quit event and display a nice message dialog while bluring this window
+        print "Please wait while all agents exit..."
+        self.pachaApp.quit_main()
+
+
+    """ Initial method to set dynamic elements up
     """
     def setupView(self):
         self.groupViews = {}
@@ -76,31 +92,20 @@ class View_MainWindow(Ui_MainWindow.Ui_MainWindow):
         self.showedViewMachine = self.machineViews.values()[0]
 
 
+    """ Init method
+            pachaApp    : the Pacha application
+            conf        : Pacha global conf
+            groups      : list of groups handled by Pacha
     """
-    """
-    def treeWidgetItemSelChanged(self):
-        # This TreeWidget allows only one item to be selected at a time
-        # So the first item is the only one on the list
-        selectedLabel = str(self.treeWidget.selectedItems()[0].text(0))
+    def __init__(self, pachaApp, conf, groups):
+        self.pachaApp = pachaApp
+        self.conf = conf
+        self.groups = groups
 
-        # If user has selected a machine
-        if (selectedLabel in self.machineViews.keys()):
-            self.showedViewMachine.hide()
-            self.machineViews[selectedLabel].show()
-            self.showedViewMachine = self.machineViews[selectedLabel]
+        self.widgetMainWindow = QtGui.QMainWindow()
+        self.setupUi(self.widgetMainWindow)
+        self.setupView()
 
-
-    """
-    """
-    def show(self):
-        self.widgetMainWindow.show()
-
-
-    """
-    """
-    def quit_main(self, event):
-        #TODO add an quit event and display a nice message dialog while bluring this window
-        print "Please wait while all agents exit..."
-        self.pachaApp.quit_main()
+        self.widgetMainWindow.closeEvent = self.quit_main
 
 # vim:ts=4:sw=4:softtabstop=4:smarttab:expandtab

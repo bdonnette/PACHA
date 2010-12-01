@@ -14,42 +14,12 @@
 from PyQt4 import QtCore, QtGui
 import Ui_SMBLDAP_dialog
 
-"""
+""" Dialog box for SMB/LDAP to add/remove users to groups
 """
 class View_SMBLDAP_dialog(Ui_SMBLDAP_dialog.Ui_SMBLDAP_dialog):
 
-    """
-    """
-    def __init__(self, conf, machine):
-        self.conf = conf
-        self.machine = machine
 
-        self.widget = QtGui.QWidget()
-        self.setupUi(self.widget)
-        self.setupView()
-
-
-    """
-    """
-    def setupView(self):
-        # Keep track of the memberUid on which we are working
-        self.displayedUser = ""
-
-        QtCore.QObject.connect(self.btnClose, QtCore.SIGNAL("clicked()"), self.closeDialog)
-        QtCore.QObject.connect(self.btnRefresh, QtCore.SIGNAL("clicked()"), self.refreshGroupsLists)
-        QtCore.QObject.connect(self.btnAddUserToGroup, QtCore.SIGNAL("clicked()"), self.add_user_to_group)
-        QtCore.QObject.connect(self.btnRemoveUserFromGroup, QtCore.SIGNAL("clicked()"), self.remove_user_from_group)
-
-#        self.refreshGroupsLists()
-
-
-    """
-    """
-    def closeDialog(self):
-        self.widget.close()
-
-
-    """
+    """ Ask internal business object to refresh the groups list
     """
     def refreshGroupsLists(self):
         error, groups_of_user = self.machine.smbldap.getGroupsOfUser(self.displayedUser)
@@ -75,7 +45,7 @@ class View_SMBLDAP_dialog(Ui_SMBLDAP_dialog.Ui_SMBLDAP_dialog):
                     self.listGroupsAvailable.addItem(QtCore.QString(stri))
 
 
-    """
+    """ Ask internal business object to add user to group
     """
     def add_user_to_group(self):
         group = ""
@@ -101,7 +71,7 @@ class View_SMBLDAP_dialog(Ui_SMBLDAP_dialog.Ui_SMBLDAP_dialog):
             self.refreshGroupsLists()
 
 
-    """
+    """ Ask internal business object to remove user from group
     """
     def remove_user_from_group(self):
         group = ""
@@ -127,12 +97,42 @@ class View_SMBLDAP_dialog(Ui_SMBLDAP_dialog.Ui_SMBLDAP_dialog):
             self.refreshGroupsLists()
 
 
-    """
+    """ Show this dialog
     """
     def show(self, memberUid):
         self.displayedUser = memberUid
         self.refreshGroupsLists()
         self.widget.show()
 
+
+    """ Destroy/hide this widget
+    """
+    def closeDialog(self):
+        self.widget.close()
+
+
+    """ Initial method to set dynamic elements up
+    """
+    def setupView(self):
+        # Keep track of the memberUid on which we are working
+        self.displayedUser = ""
+
+        QtCore.QObject.connect(self.btnClose, QtCore.SIGNAL("clicked()"), self.closeDialog)
+        QtCore.QObject.connect(self.btnRefresh, QtCore.SIGNAL("clicked()"), self.refreshGroupsLists)
+        QtCore.QObject.connect(self.btnAddUserToGroup, QtCore.SIGNAL("clicked()"), self.add_user_to_group)
+        QtCore.QObject.connect(self.btnRemoveUserFromGroup, QtCore.SIGNAL("clicked()"), self.remove_user_from_group)
+
+
+    """ Init method
+            conf            : Pacha global conf
+            machine         : the machine that owns the business object of this widget
+    """
+    def __init__(self, conf, machine):
+        self.conf = conf
+        self.machine = machine
+
+        self.widget = QtGui.QWidget()
+        self.setupUi(self.widget)
+        self.setupView()
 
 # vim:ts=4:sw=4:softtabstop=4:smarttab:expandtab

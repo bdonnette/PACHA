@@ -15,46 +15,20 @@ from PyQt4 import QtCore, QtGui
 import os
 import Ui_SMBLDAP, View_SMBLDAP_dialog
 
-"""
+""" GUI for Pacha's SMB/LDAP
 """
 class View_SMBLDAP(Ui_SMBLDAP.Ui_SMBLDAP):
 
-    """
-    """
-    def __init__(self, conf, machine):
-        self.conf = conf
-        self.machine = machine
 
-        self.widgetSMBLDAP = QtGui.QWidget()
-        self.setupUi(self.widgetSMBLDAP)
-        self.setupView()
-
-
-    """
-    """
-    def setupView(self):
-        QtCore.QObject.connect(self.btnUserAdd, QtCore.SIGNAL("clicked()"), self.addUser)
-        QtCore.QObject.connect(self.btnUserDel, QtCore.SIGNAL("clicked()"), self.delUser)
-        QtCore.QObject.connect(self.btnUsersRefresh, QtCore.SIGNAL("clicked()"), self.refreshUsersList)
-        QtCore.QObject.connect(self.btnGroupAdd, QtCore.SIGNAL("clicked()"), self.addGroup)
-        QtCore.QObject.connect(self.btnGroupDel, QtCore.SIGNAL("clicked()"), self.delGroup)
-        QtCore.QObject.connect(self.btnGroupsRefresh, QtCore.SIGNAL("clicked()"), self.refreshGroupsList)
-
-        QtCore.QObject.connect(self.listUsers, QtCore.SIGNAL("itemDoubleClicked(QListWidgetItem*)"), self.show_dialog)
-
-        # Populate SMBLDAP lists
-        self.refreshUsersList()
-        self.refreshGroupsList()
-
-
-    """
+    """ Show dialog to add/remove user from groups
+            item    : the QWidgetItem of the user the user wants to modify
     """
     def show_dialog(self, item):
         self.SMBLDAP_dialog = View_SMBLDAP_dialog.View_SMBLDAP_dialog(self.conf, self.machine)
         self.SMBLDAP_dialog.show(item.text())
 
 
-    """
+    """ Ask internal business object to create user
     """
     def addUser(self):
         newUserName = self.editUser.text()
@@ -79,7 +53,7 @@ class View_SMBLDAP(Ui_SMBLDAP.Ui_SMBLDAP):
                 self.refreshUsersList()
 
 
-    """
+    """ Ask internal business object to delete user
     """
     def delUser(self):
         userNameToDel = ""
@@ -104,7 +78,7 @@ class View_SMBLDAP(Ui_SMBLDAP.Ui_SMBLDAP):
             self.refreshUsersList()
 
 
-    """
+    """ Ask internal business object to refresh list user
     """
     def refreshUsersList(self):
         error, cmd_res = self.machine.smbldap.usersLs()
@@ -119,7 +93,7 @@ class View_SMBLDAP(Ui_SMBLDAP.Ui_SMBLDAP):
                 self.listUsers.addItem(QtCore.QString(stri))
 
 
-    """
+    """ Ask internal business object to add group
     """
     def addGroup(self):
         newGroupName = self.editGroup.text()
@@ -143,7 +117,7 @@ class View_SMBLDAP(Ui_SMBLDAP.Ui_SMBLDAP):
                 self.refreshGroupsList()
 
 
-    """
+    """ Ask internal business object to delete group
     """
     def delGroup(self):
         groupNameToDel = ""
@@ -168,7 +142,7 @@ class View_SMBLDAP(Ui_SMBLDAP.Ui_SMBLDAP):
             self.refreshGroupsList()
 
 
-    """
+    """ Ask internal business object to refresh groups list
     """
     def refreshGroupsList(self):
         error, cmd_res = self.machine.smbldap.groupsLs()
@@ -181,5 +155,35 @@ class View_SMBLDAP(Ui_SMBLDAP.Ui_SMBLDAP):
             # TODO put \r in conf
             for stri in cmd_res:
                 self.listGroups.addItem(stri)
+
+
+    """ Initial method to set dynamic elements up
+    """
+    def setupView(self):
+        QtCore.QObject.connect(self.btnUserAdd, QtCore.SIGNAL("clicked()"), self.addUser)
+        QtCore.QObject.connect(self.btnUserDel, QtCore.SIGNAL("clicked()"), self.delUser)
+        QtCore.QObject.connect(self.btnUsersRefresh, QtCore.SIGNAL("clicked()"), self.refreshUsersList)
+        QtCore.QObject.connect(self.btnGroupAdd, QtCore.SIGNAL("clicked()"), self.addGroup)
+        QtCore.QObject.connect(self.btnGroupDel, QtCore.SIGNAL("clicked()"), self.delGroup)
+        QtCore.QObject.connect(self.btnGroupsRefresh, QtCore.SIGNAL("clicked()"), self.refreshGroupsList)
+
+        QtCore.QObject.connect(self.listUsers, QtCore.SIGNAL("itemDoubleClicked(QListWidgetItem*)"), self.show_dialog)
+
+        # Populate SMBLDAP lists
+        self.refreshUsersList()
+        self.refreshGroupsList()
+
+
+    """ Init method
+            conf            : Pacha global conf
+            machine         : the machine that owns the business object of this widget
+    """
+    def __init__(self, conf, machine):
+        self.conf = conf
+        self.machine = machine
+
+        self.widgetSMBLDAP = QtGui.QWidget()
+        self.setupUi(self.widgetSMBLDAP)
+        self.setupView()
 
 # vim:ts=4:sw=4:softtabstop=4:smarttab:expandtab

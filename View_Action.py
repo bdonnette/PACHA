@@ -14,26 +14,13 @@
 from PyQt4 import QtCore, QtGui
 import os
 
-"""
+""" GUI for Pacha's Action
 """
 class View_Action(object):
 
-    """
-    """
-    def __init__(self, action, viewActionsSupervisions):
-        self.action = action
-        self.viewActionsSupervisions = viewActionsSupervisions
 
-        self.pushButton = QtGui.QPushButton()
-        self.setupView()
-
+    """ Ask internal business object to perform action
     """
-    """
-    def setupView(self):
-        self.pushButton.setText(self.action.label)
-        QtCore.QObject.connect(self.pushButton, QtCore.SIGNAL("clicked()"), self.issue_action)
-
-
     def issue_action(self):
         error, stdout = self.action.issue()
         self.viewActionsSupervisions.displayResult(os.linesep.join(stdout))
@@ -41,6 +28,24 @@ class View_Action(object):
             QtGui.QMessageBox.critical(self.pushButton,
     			                          'Erreur',
                                           "La commande s'est terminee avec l'erreur %i : %s%s" % (error, os.linesep, os.linesep.join(stdout)))
+
+
+    """ Initial method to set dynamic elements up
+    """
+    def setupView(self):
+        self.pushButton.setText(self.action.label)
+        QtCore.QObject.connect(self.pushButton, QtCore.SIGNAL("clicked()"), self.issue_action)
+
             
+    """ Init method
+            action                  : internal business object this view is bound to
+            viewActionsSupervisions : the GUI panel this object belongs to
+    """
+    def __init__(self, action, viewActionsSupervisions):
+        self.action = action
+        self.viewActionsSupervisions = viewActionsSupervisions
+
+        self.pushButton = QtGui.QPushButton()
+        self.setupView()
 
 # vim:ts=4:sw=4:softtabstop=4:smarttab:expandtab

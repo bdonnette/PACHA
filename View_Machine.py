@@ -15,21 +15,32 @@ from PyQt4 import QtCore, QtGui
 import Ui_Machine, View_ActionsSupervisions, View_SMBLDAP
 import sys
 
-
+""" GUI for Pacha's Machine
+"""
 class View_Machine(Ui_Machine.Ui_Machine):
 
-    def __init__(self, conf, machine, view_MainWindow, treeItem):
-        self.conf = conf
-        self.machine = machine
-
-        self.view_MainWindow = view_MainWindow
-        # The TreeItem representing this machine in the TreeView
-        self.treeItem = treeItem
-        self.widgetMachine = QtGui.QWidget()
-        self.setupUi(self.widgetMachine)
-        self.setupView()
+    """ Update GUI regarding internal Machine's state
+    """
+    def reflectStates(self):
+        self.view_ActionsSupervisions.reflectStates()
+        self.treeItem.setIcon(0, self.conf.val["general"]["icon_levels"][self.machine.state])
+        self.machine.group.view.reflectStates()
 
 
+    """ Show this widget
+    """
+    def show(self):
+        self.widgetMachine.show()
+
+
+    """ Hide this widget
+    """
+    def hide(self):
+        self.widgetMachine.hide()
+
+
+    """ Initial method to set dynamic elements up
+    """
     def setupView(self):
         self.view_ActionsSupervisions = View_ActionsSupervisions.View_ActionsSupervisions(self.conf, self.machine, self)
 
@@ -42,18 +53,21 @@ class View_Machine(Ui_Machine.Ui_Machine):
         self.reflectStates()
 
 
-    def reflectStates(self):
-        self.view_ActionsSupervisions.reflectStates()
-        self.treeItem.setIcon(0, self.conf.val["general"]["icon_levels"][self.machine.state])
-        self.machine.group.view.reflectStates()
+    """ Init method
+            conf            : Pacha global conf
+            machine         : the machine this GUI is bound to
+            view_MainWindow : Pacha's main window
+            treeItem        : the group this GUI is bound to
+    """
+    def __init__(self, conf, machine, view_MainWindow, treeItem):
+        self.conf = conf
+        self.machine = machine
 
-
-    def show(self):
-        self.widgetMachine.show()
-
-
-    def hide(self):
-        self.widgetMachine.hide()
-            
+        self.view_MainWindow = view_MainWindow
+        # The TreeItem representing this machine in the TreeView
+        self.treeItem = treeItem
+        self.widgetMachine = QtGui.QWidget()
+        self.setupUi(self.widgetMachine)
+        self.setupView()
 
 # vim:ts=4:sw=4:softtabstop=4:smarttab:expandtab

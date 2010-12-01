@@ -15,22 +15,28 @@ from PyQt4 import QtCore, QtGui
 import Ui_ActionsSupervisions, View_Action, View_Supervision, View_Service
 import sys
 
-"""
+""" GUI for Pacha's Action and Supervision panel
 """
 class View_ActionsSupervisions(Ui_ActionsSupervisions.Ui_ActionsSupervisions):
 
+    """ Update GUI regarding internal Actions and Supervisions' states
     """
-    """
-    def __init__(self, conf, machine, view_machine):
-        self.conf = conf
-        self.machine = machine
-        self.view_machine = view_machine
+    def reflectStates(self):
+        for viewSupervision in self.viewSupervisions:
+            viewSupervision.reflectState()
 
-        self.widgetActionsSupervisions = QtGui.QWidget()
-        self.setupUi(self.widgetActionsSupervisions)
-        self.setupView()
+        for viewService in self.viewServices:
+            viewService.reflectState()
 
+
+    """ Populate Edit
+            text    : output to populate Edit with
     """
+    def displayResult(self, text):
+        self.resultEdit.setPlainText(text)
+
+
+    """ Initial method to set dynamic elements up
     """
     def setupView(self):
         # Supervisions
@@ -57,18 +63,18 @@ class View_ActionsSupervisions(Ui_ActionsSupervisions.Ui_ActionsSupervisions):
             self.viewServices.append(viewService)
 
 
-    def reflectStates(self):
-        for viewSupervision in self.viewSupervisions:
-            viewSupervision.reflectState()
-
-        for viewService in self.viewServices:
-            viewService.reflectState()
-
+    """ Init method
+            conf            : Pacha global conf
+            machine         : internal business object this view is bound to
+            view_machine    : the widget this object belongs to
     """
-    """
-    def displayResult(self, text):
-        self.resultEdit.setPlainText(text)
+    def __init__(self, conf, machine, view_machine):
+        self.conf = conf
+        self.machine = machine
+        self.view_machine = view_machine
 
-
+        self.widgetActionsSupervisions = QtGui.QWidget()
+        self.setupUi(self.widgetActionsSupervisions)
+        self.setupView()
 
 # vim:ts=4:sw=4:softtabstop=4:smarttab:expandtab
