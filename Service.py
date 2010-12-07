@@ -26,7 +26,8 @@ class Service(object):
         if (error):
             self.status = self.conf.STATE_UNKNOWN
         else:
-            if (stdout == '0'):
+            #TODO handle multi-line output
+            if (stdout[0] == '0'):
                 self.status = self.conf.STATE_RED
             else:
                 self.status = self.conf.STATE_GREEN
