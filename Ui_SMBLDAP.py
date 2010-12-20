@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'Ui_SMBLDAP.ui'
 #
-# Created: Tue Nov 30 14:40:27 2010
+# Created: Mon Dec 20 11:48:13 2010
 #      by: PyQt4 UI code generator 4.8.1
 #
 # WARNING! All changes made in this file will be lost!

@@ -72,6 +72,14 @@ class SMBLDAP(object):
         return self.machine.sshAgent.query(self.cmd_ls_groups_of_user % (self.userConf.get("smbldap", "groups_searchbase"), userName))
 
 
+    """ Ask remote server to list all groups of a specified user
+            userName    : the memberUid of the user
+            return      : (exitStatus, [stdoutLine ...])
+    """
+    def getUsersOfGroup(self, groupName):
+        return self.machine.sshAgent.query(self.cmd_ls_users_of_group % (self.userConf.get("smbldap", "groups_searchbase"), groupName))
+
+
     """ Return the list of all groups a specified user can be added to.
             Retreived through {groupsLs \ getGroupsOfUser}
 
@@ -99,6 +107,37 @@ class SMBLDAP(object):
 
         else:
             result = all_groups
+    
+        return (error, result)
+
+
+    """ Return the list of all users a specified group can own.
+            Retreived through {usersLs \ getUsersOfGroup}
+
+            groupName   : the UID of the group
+            return      : (exitStatus, [stdoutLine ...])
+    """
+    def getUsersAvailableForGroup(self, groupName):
+
+        result = ""
+
+        error, all_users = self.usersLs()
+
+        if (not error):
+            error, users_of_group = self.getUsersOfGroup(groupName)
+
+            if (not error):
+                for user in users_of_group:
+                    if (user != ''):
+                        all_users.remove(user)
+
+                result = all_users
+
+            else:
+                result = users_of_group
+
+        else:
+            result = all_users
     
         return (error, result)
 
@@ -133,7 +172,8 @@ class SMBLDAP(object):
         print "| | |-cmd_group_add\t: %s" % self.cmd_group_add
         print "| | |-cmd_group_del\t: %s" % self.cmd_group_del
         print "| | |-cmd_groups_ls\t: %s" % self.cmd_groups_ls
-        print "| | |-cmd_groups_ls\t: %s" % self.cmd_ls_groups_of_user
+        print "| | |-cmd_ls_groups_of_user\t: %s" % self.cmd_ls_groups_of_user
+        print "| | |-cmd_ls_users_of_group\t: %s" % self.cmd_ls_users_of_group
         print "| | |-cmd_add_user_to_group\t: %s" % self.cmd_add_user_from_group
         print "| | |-cmd_remove_user_from_group\t: %s" % self.cmd_remove_user_from_group
 
@@ -159,6 +199,7 @@ class SMBLDAP(object):
             self.cmd_group_del = self.conf.val[section]["cmd_group_del"]
             self.cmd_groups_ls = self.conf.val[section]["cmd_groups_ls"] % self.userConf.get(section, "groups_searchbase")
             self.cmd_ls_groups_of_user = self.conf.val[section]["cmd_ls_groups_of_user"]
+            self.cmd_ls_users_of_group = self.conf.val[section]["cmd_ls_users_of_group"]
             self.cmd_add_user_to_group = self.conf.val[section]["cmd_add_user_to_group"]
             self.cmd_remove_user_from_group = self.conf.val[section]["cmd_remove_user_from_group"]
         except (ConfigParser.NoOptionError,

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'Ui_SMBLDAP_dialog.ui'
 #
-# Created: Tue Nov 30 14:40:27 2010
+# Created: Mon Dec 20 11:48:13 2010
 #      by: PyQt4 UI code generator 4.8.1
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,12 +27,12 @@ class Ui_SMBLDAP_dialog(object):
         self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
         self.verticalLayout_6 = QtGui.QVBoxLayout()
         self.verticalLayout_6.setObjectName(_fromUtf8("verticalLayout_6"))
-        self.label_3 = QtGui.QLabel(SMBLDAP_dialog)
-        self.label_3.setObjectName(_fromUtf8("label_3"))
-        self.verticalLayout_6.addWidget(self.label_3)
-        self.listGroupsAvailable = QtGui.QListWidget(SMBLDAP_dialog)
-        self.listGroupsAvailable.setObjectName(_fromUtf8("listGroupsAvailable"))
-        self.verticalLayout_6.addWidget(self.listGroupsAvailable)
+        self.label_left = QtGui.QLabel(SMBLDAP_dialog)
+        self.label_left.setObjectName(_fromUtf8("label_left"))
+        self.verticalLayout_6.addWidget(self.label_left)
+        self.listLeft = QtGui.QListWidget(SMBLDAP_dialog)
+        self.listLeft.setObjectName(_fromUtf8("listLeft"))
+        self.verticalLayout_6.addWidget(self.listLeft)
         self.horizontalLayout_3.addLayout(self.verticalLayout_6)
         self.verticalLayout_7 = QtGui.QVBoxLayout()
         self.verticalLayout_7.setObjectName(_fromUtf8("verticalLayout_7"))
@@ -45,12 +45,12 @@ class Ui_SMBLDAP_dialog(object):
         self.horizontalLayout_3.addLayout(self.verticalLayout_7)
         self.verticalLayout_8 = QtGui.QVBoxLayout()
         self.verticalLayout_8.setObjectName(_fromUtf8("verticalLayout_8"))
-        self.label_4 = QtGui.QLabel(SMBLDAP_dialog)
-        self.label_4.setObjectName(_fromUtf8("label_4"))
-        self.verticalLayout_8.addWidget(self.label_4)
-        self.listGroupsOfUser = QtGui.QListWidget(SMBLDAP_dialog)
-        self.listGroupsOfUser.setObjectName(_fromUtf8("listGroupsOfUser"))
-        self.verticalLayout_8.addWidget(self.listGroupsOfUser)
+        self.label_right = QtGui.QLabel(SMBLDAP_dialog)
+        self.label_right.setObjectName(_fromUtf8("label_right"))
+        self.verticalLayout_8.addWidget(self.label_right)
+        self.listRight = QtGui.QListWidget(SMBLDAP_dialog)
+        self.listRight.setObjectName(_fromUtf8("listRight"))
+        self.verticalLayout_8.addWidget(self.listRight)
         self.horizontalLayout_3.addLayout(self.verticalLayout_8)
         self.verticalLayout_5.addLayout(self.horizontalLayout_3)
         self.horizontalLayout_4 = QtGui.QHBoxLayout()
@@ -71,12 +71,12 @@ class Ui_SMBLDAP_dialog(object):
 
     def retranslateUi(self, SMBLDAP_dialog):
         SMBLDAP_dialog.setWindowTitle(QtGui.QApplication.translate("SMBLDAP_dialog", "Add user to groups", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_3.setText(QtGui.QApplication.translate("SMBLDAP_dialog", "Available groups:", None, QtGui.QApplication.UnicodeUTF8))
-        self.listGroupsAvailable.setSortingEnabled(True)
+        self.label_left.setText(QtGui.QApplication.translate("SMBLDAP_dialog", "Available groups:", None, QtGui.QApplication.UnicodeUTF8))
+        self.listLeft.setSortingEnabled(True)
         self.btnAddUserToGroup.setText(QtGui.QApplication.translate("SMBLDAP_dialog", ">>>", None, QtGui.QApplication.UnicodeUTF8))
         self.btnRemoveUserFromGroup.setText(QtGui.QApplication.translate("SMBLDAP_dialog", "<<<", None, QtGui.QApplication.UnicodeUTF8))
-        self.label_4.setText(QtGui.QApplication.translate("SMBLDAP_dialog", "Groups user belongs to:", None, QtGui.QApplication.UnicodeUTF8))
-        self.listGroupsOfUser.setSortingEnabled(True)
+        self.label_right.setText(QtGui.QApplication.translate("SMBLDAP_dialog", "Groups user belongs to:", None, QtGui.QApplication.UnicodeUTF8))
+        self.listRight.setSortingEnabled(True)
         self.btnClose.setText(QtGui.QApplication.translate("SMBLDAP_dialog", "Close", None, QtGui.QApplication.UnicodeUTF8))
         self.btnRefresh.setText(QtGui.QApplication.translate("SMBLDAP_dialog", "Refresh", None, QtGui.QApplication.UnicodeUTF8))
 

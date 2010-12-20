@@ -20,12 +20,20 @@ import Ui_SMBLDAP, View_SMBLDAP_dialog
 class View_SMBLDAP(Ui_SMBLDAP.Ui_SMBLDAP):
 
 
-    """ Show dialog to add/remove user from groups
-            item    : the QWidgetItem of the user the user wants to modify
+    """ Show dialog to add/remove groups to users
+            item    : the QWidgetItem of the user we want to modify
     """
-    def show_dialog(self, item):
+    def show_dialog_users(self, item):
         self.SMBLDAP_dialog = View_SMBLDAP_dialog.View_SMBLDAP_dialog(self.conf, self.machine)
-        self.SMBLDAP_dialog.show(item.text())
+        self.SMBLDAP_dialog.show(True, item.text())
+
+
+    """ Show dialog to add/remove users to groups
+            item    : the QWidgetItem of the group we want to modify
+    """
+    def show_dialog_groups(self, item):
+        self.SMBLDAP_dialog = View_SMBLDAP_dialog.View_SMBLDAP_dialog(self.conf, self.machine)
+        self.SMBLDAP_dialog.show(False, item.text())
 
 
     """ Ask internal business object to create user
@@ -167,7 +175,8 @@ class View_SMBLDAP(Ui_SMBLDAP.Ui_SMBLDAP):
         QtCore.QObject.connect(self.btnGroupDel, QtCore.SIGNAL("clicked()"), self.delGroup)
         QtCore.QObject.connect(self.btnGroupsRefresh, QtCore.SIGNAL("clicked()"), self.refreshGroupsList)
 
-        QtCore.QObject.connect(self.listUsers, QtCore.SIGNAL("itemDoubleClicked(QListWidgetItem*)"), self.show_dialog)
+        QtCore.QObject.connect(self.listUsers, QtCore.SIGNAL("itemDoubleClicked(QListWidgetItem*)"), self.show_dialog_users)
+        QtCore.QObject.connect(self.listGroups, QtCore.SIGNAL("itemDoubleClicked(QListWidgetItem*)"), self.show_dialog_groups)
 
         # Populate SMBLDAP lists
         self.refreshUsersList()

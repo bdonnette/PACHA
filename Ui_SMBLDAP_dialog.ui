@@ -24,14 +24,14 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_6">
          <item>
-          <widget class="QLabel" name="label_3">
+          <widget class="QLabel" name="label_left">
            <property name="text">
             <string>Available groups:</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QListWidget" name="listGroupsAvailable">
+          <widget class="QListWidget" name="listLeft">
            <property name="sortingEnabled">
             <bool>true</bool>
            </property>
@@ -60,14 +60,14 @@
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_8">
          <item>
-          <widget class="QLabel" name="label_4">
+          <widget class="QLabel" name="label_right">
            <property name="text">
             <string>Groups user belongs to:</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QListWidget" name="listGroupsOfUser">
+          <widget class="QListWidget" name="listRight">
            <property name="sortingEnabled">
             <bool>true</bool>
            </property>
