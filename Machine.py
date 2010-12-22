@@ -97,17 +97,19 @@ class Machine(Thread):
     def update_hb_state(self):
         error, stdout = self.sshAgent.query(self.conf.val["general"]["hb_status_command"])
 
+        res = stdout[0]
         hb_state = self.conf.HB_UNKNOWN
 
         if (error):
             hb_state = self.conf.HB_ERROR
         else:
-            if (stdout in [self.conf.HB_LOCAL,
+            if (res in [self.conf.HB_LOCAL,
                            self.conf.HB_FOREIGN,
                            self.conf.HB_ALL,
                            self.conf.HB_NONE,
                            self.conf.HB_TRANSITION]):
-                hb_state = stdout
+                hb_state = res
+                print "[%s]: %s" % (self.ip, hb_state)
 
         self.hb_state = hb_state 
 
