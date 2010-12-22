@@ -16,6 +16,14 @@ case "$1" in
 		done
 	;;
 
+	tar)
+		echo "Compressing app: don't forget to adjust file 'version' if required"
+		cd ..
+		version=$(cat sources/version)
+		tar czf "./Pacha-${version}.tar.gz" ./sources/{*.py,./*.ui,auto,config,images,INSTALL,README,version}
+		echo "Done: '../Pacha-${version}.tar.gz'"
+	;;
+
 	*)
 		echo "Unknown command"
 		exit 1

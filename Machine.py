@@ -109,7 +109,6 @@ class Machine(Thread):
                            self.conf.HB_NONE,
                            self.conf.HB_TRANSITION]):
                 hb_state = res
-                print "[%s]: %s" % (self.ip, hb_state)
 
         self.hb_state = hb_state 
 
