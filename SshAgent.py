@@ -49,9 +49,11 @@ class SshAgent(object):
                         stdout = subprocess.PIPE,
                         stderr = subprocess.STDOUT)
 
-        exitStatus = child.wait()
+        result = child.communicate()
+        exitStatus = child.returncode
 
-        for line in child.stdout:
+        out = result[0].strip("\n").split("\n")
+        for line in out:
                 exitLines.append(line.strip('\r\n'))
 
         # If command returned OK
